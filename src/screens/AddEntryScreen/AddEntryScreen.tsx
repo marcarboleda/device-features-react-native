@@ -10,6 +10,7 @@ import {
   KeyboardAvoidingView,
   Platform,
 } from 'react-native';
+import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { useAddEntryLogic } from './AddEntryScreen.logic';
 import { createStyles } from './AddEntryScreen.styles';
@@ -51,7 +52,7 @@ const AddEntryScreen = () => {
           activeOpacity={0.7}
           disabled={saving}
         >
-          <Text style={styles.backBtnText}>←</Text>
+          <Ionicons name="arrow-back" size={20} color={colors.text} />
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
@@ -68,7 +69,10 @@ const AddEntryScreen = () => {
           {saving ? (
             <ActivityIndicator size="small" color="#FFFFFF" />
           ) : (
-            <Text style={styles.saveBtnText}>Save</Text>
+            <>
+              <Ionicons name="checkmark" size={16} color="#FFFFFF" />
+              <Text style={styles.saveBtnText}>Post</Text>
+            </>
           )}
         </TouchableOpacity>
       </View>
@@ -82,10 +86,10 @@ const AddEntryScreen = () => {
         <View style={[styles.photoSection, !!photoError && styles.photoSectionError]}>
           {!imageUri ? (
             <View style={styles.photoPlaceholder}>
-              <View style={styles.photoPlaceholderIconWrap}>
-                <Text style={styles.photoPlaceholderIconText}>[ ]</Text>
+              <View style={styles.photoPlaceholderIconCircle}>
+                <Ionicons name="camera" size={30} color={colors.accent} />
               </View>
-              <Text style={styles.photoPlaceholderTitle}>No Photo Taken</Text>
+              <Text style={styles.photoPlaceholderTitle}>Add a Photo</Text>
               <Text style={styles.photoPlaceholderSub}>
                 Take a photo to capture and tag this travel moment
               </Text>
@@ -95,6 +99,7 @@ const AddEntryScreen = () => {
                 activeOpacity={0.85}
                 disabled={saving}
               >
+                <Ionicons name="camera-outline" size={16} color="#FFFFFF" />
                 <Text style={styles.openCameraBtnText}>Open Camera</Text>
               </TouchableOpacity>
             </View>
@@ -105,26 +110,31 @@ const AddEntryScreen = () => {
                 style={styles.photoPreview}
                 resizeMode="cover"
               />
-              <TouchableOpacity
-                style={styles.retakeBtn}
-                onPress={retakePicture}
-                activeOpacity={0.8}
-                disabled={saving || loadingLocation}
-              >
-                <Text style={styles.retakeBtnText}>Retake</Text>
-              </TouchableOpacity>
-              <View style={styles.addressBar}>
-                <Text style={styles.addressBarLabel}>Loc</Text>
-                {loadingLocation ? (
-                  <>
-                    <Text style={styles.addressBarLoading}>Getting your location…</Text>
-                    <ActivityIndicator size="small" color={colors.accent} />
-                  </>
-                ) : (
-                  <Text style={styles.addressBarText} numberOfLines={2}>
-                    {address || 'Location unavailable'}
-                  </Text>
-                )}
+              <View style={styles.photoOverlayRow}>
+                <View style={styles.addressRow}>
+                  {loadingLocation ? (
+                    <>
+                      <ActivityIndicator size="small" color="#FFFFFF" />
+                      <Text style={styles.addressLoading}>Getting location…</Text>
+                    </>
+                  ) : (
+                    <>
+                      <Ionicons name="location" size={13} color="#FFFFFF" />
+                      <Text style={styles.addressText} numberOfLines={1}>
+                        {address || 'Location unavailable'}
+                      </Text>
+                    </>
+                  )}
+                </View>
+                <TouchableOpacity
+                  style={styles.retakeBtn}
+                  onPress={retakePicture}
+                  activeOpacity={0.8}
+                  disabled={saving || loadingLocation}
+                >
+                  <Ionicons name="camera-reverse-outline" size={14} color="#FFFFFF" />
+                  <Text style={styles.retakeBtnText}>Retake</Text>
+                </TouchableOpacity>
               </View>
             </>
           )}
@@ -134,19 +144,18 @@ const AddEntryScreen = () => {
           <Text style={styles.photoErrorText}>{photoError}</Text>
         )}
 
-        <View style={styles.formSection}>
-          <View style={styles.fieldGroup}>
+        <View style={styles.formContainer}>
+          <View style={styles.formField}>
             <View style={styles.fieldLabelRow}>
-              <Text style={styles.fieldLabel}>Entry Title</Text>
+              <View style={styles.fieldLabelLeft}>
+                <Ionicons name="create-outline" size={13} color={colors.textSecondary} />
+                <Text style={styles.fieldLabel}>Title</Text>
+              </View>
               <Text style={styles.fieldRequired}>Required</Text>
             </View>
             <Text style={styles.fieldHint}>Give this memory a meaningful name</Text>
             <TextInput
-              style={[
-                styles.input,
-                titleFocused && styles.inputFocused,
-                !!titleError && styles.inputError,
-              ]}
+              style={[styles.input, titleFocused && { color: colors.accent }]}
               placeholder="e.g. Sunset at Palawan Beach"
               placeholderTextColor={colors.textMuted}
               value={title}
@@ -163,34 +172,24 @@ const AddEntryScreen = () => {
               ) : (
                 <Text />
               )}
-              <Text
-                style={[
-                  styles.charCount,
-                  title.length > 50 && styles.charCountWarn,
-                ]}
-              >
+              <Text style={[styles.charCount, title.length > 50 && styles.charCountWarn]}>
                 {title.length}/60
               </Text>
             </View>
           </View>
 
-          <View style={styles.divider} />
-
-          <View style={styles.fieldGroup}>
+          <View style={[styles.formField, styles.formFieldBorder]}>
             <View style={styles.fieldLabelRow}>
-              <Text style={styles.fieldLabel}>Description</Text>
-              <Text style={styles.charCount}>Optional</Text>
+              <View style={styles.fieldLabelLeft}>
+                <Ionicons name="document-text-outline" size={13} color={colors.textSecondary} />
+                <Text style={styles.fieldLabel}>Description</Text>
+              </View>
+              <Text style={styles.fieldOptional}>Optional</Text>
             </View>
-            <Text style={styles.fieldHint}>
-              Describe what made this place special
-            </Text>
+            <Text style={styles.fieldHint}>What made this place special?</Text>
             <TextInput
-              style={[
-                styles.input,
-                styles.textArea,
-                descFocused && styles.inputFocused,
-              ]}
-              placeholder="Share your thoughts, feelings, or memorable details about this place…"
+              style={[styles.input, styles.textArea]}
+              placeholder="Share your thoughts, feelings, or memorable details…"
               placeholderTextColor={colors.textMuted}
               value={description}
               onChangeText={setDescription}
@@ -204,12 +203,7 @@ const AddEntryScreen = () => {
             />
             <View style={styles.fieldFooter}>
               <Text />
-              <Text
-                style={[
-                  styles.charCount,
-                  description.length > 260 && styles.charCountWarn,
-                ]}
-              >
+              <Text style={[styles.charCount, description.length > 260 && styles.charCountWarn]}>
                 {description.length}/300
               </Text>
             </View>
@@ -217,10 +211,13 @@ const AddEntryScreen = () => {
         </View>
 
         <View style={styles.infoBox}>
-          <View style={styles.infoBoxBar} />
-          <Text style={styles.infoBoxText}>
-            Location is automatically captured when you take a photo. Going back without saving will discard this entry.
-          </Text>
+          <Ionicons name="information-circle-outline" size={18} color={colors.accent} />
+          <View style={styles.infoBoxTextWrap}>
+            <Text style={styles.infoBoxTitle}>Auto-tagged Location</Text>
+            <Text style={styles.infoBoxText}>
+              Your current location is captured automatically when you take a photo. Going back without saving discards this entry.
+            </Text>
+          </View>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
