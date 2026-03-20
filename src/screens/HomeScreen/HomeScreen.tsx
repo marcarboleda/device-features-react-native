@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -10,6 +10,7 @@ import {
   Modal,
   ScrollView,
   TouchableWithoutFeedback,
+  TextInput,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
@@ -20,8 +21,14 @@ import { createStyles } from './HomeScreen.styles';
 const HomeScreen = () => {
   const { colors, isDark, toggleTheme } = useTheme();
   const styles = createStyles(colors);
+  const [searchFocused, setSearchFocused] = useState(false);
+
   const {
     entries,
+    filteredEntries,
+    searchQuery,
+    setSearchQuery,
+    handleClearSearch,
     loading,
     refreshing,
     selectedEntry,
@@ -99,21 +106,52 @@ const HomeScreen = () => {
     </TouchableOpacity>
   );
 
-  const renderEmpty = () => (
-    <View style={styles.emptyWrapper}>
-      <View style={styles.emptyIconWrap}>
-        <Ionicons name="map-outline" size={38} color={colors.textMuted} />
+  const renderEmpty = () => {
+    // Case 1: truly empty — no entries at all
+    if (entries.length === 0) {
+      return (
+        <View style={styles.emptyWrapper}>
+          <View style={styles.emptyIconWrap}>
+            <Ionicons name="map-outline" size={38} color={colors.textMuted} />
+          </View>
+          <Text style={styles.emptyTitle}>No Entries Yet</Text>
+          <Text style={styles.emptyBody}>
+            Start documenting your travels.{'\n'}Every journey deserves to be remembered.
+          </Text>
+          <TouchableOpacity
+            style={styles.emptyBtn}
+            onPress={handleNavigateToAdd}
+            activeOpacity={0.85}
+          >
+            <Ionicons name="add" size={18} color={colors.white} />
+            <Text style={styles.emptyBtnText}>Add First Entry</Text>
+          </TouchableOpacity>
+        </View>
+      );
+    }
+
+    // Case 2: entries exist but search found nothing
+    return (
+      <View style={styles.emptyWrapper}>
+        <View style={styles.emptyIconWrap}>
+          <Ionicons name="search-outline" size={38} color={colors.textMuted} />
+        </View>
+        <Text style={styles.emptyTitle}>Nothing Matched</Text>
+        <Text style={styles.emptyBody}>
+          No entries found for "{searchQuery}".{'\n'}
+          Try a different title, location, or date.
+        </Text>
+        <TouchableOpacity
+          style={styles.clearSearchBtn}
+          onPress={handleClearSearch}
+          activeOpacity={0.85}
+        >
+          <Ionicons name="close-circle-outline" size={18} color={colors.accent} />
+          <Text style={styles.clearSearchBtnText}>Clear Search</Text>
+        </TouchableOpacity>
       </View>
-      <Text style={styles.emptyTitle}>No Entries Yet</Text>
-      <Text style={styles.emptyBody}>
-        Start documenting your travels. Every journey deserves to be remembered.
-      </Text>
-      <TouchableOpacity style={styles.emptyBtn} onPress={handleNavigateToAdd} activeOpacity={0.85}>
-        <Ionicons name="add" size={18} color={colors.white} />
-        <Text style={styles.emptyBtnText}>Add First Entry</Text>
-      </TouchableOpacity>
-    </View>
-  );
+    );
+  };
 
   if (loading) {
     return (
@@ -126,6 +164,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+
       {/* ── Header ── */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
@@ -142,19 +181,50 @@ const HomeScreen = () => {
               color={colors.textSecondary}
             />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.addBtn} onPress={handleNavigateToAdd} activeOpacity={0.85}>
-            <Ionicons name="add" size={16} color={colors.white} />
-            <Text style={styles.addBtnText}>New</Text>
-          </TouchableOpacity>
         </View>
       </View>
 
+      {/* ── Search bar — only shown when entries exist ── */}
+      {entries.length > 0 && (
+        <View style={styles.searchContainer}>
+          <View style={[styles.searchWrap, searchFocused && styles.searchWrapActive]}>
+            <Ionicons
+              name="search-outline"
+              size={17}
+              color={searchFocused ? colors.accent : colors.textMuted}
+            />
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search by title, location, or date…"
+              placeholderTextColor={colors.textMuted}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+              onFocus={() => setSearchFocused(true)}
+              onBlur={() => setSearchFocused(false)}
+              returnKeyType="search"
+              clearButtonMode="never"
+            />
+            {searchQuery.length > 0 && (
+              <TouchableOpacity
+                style={styles.searchClearBtn}
+                onPress={handleClearSearch}
+                hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              >
+                <Ionicons name="close" size={12} color={colors.white} />
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      )}
+
       <FlatList
-        data={entries}
+        data={filteredEntries}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={entries.length === 0 ? { flex: 1 } : styles.listContent}
+        contentContainerStyle={
+          filteredEntries.length === 0 ? { flex: 1 } : styles.listContent
+        }
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -164,7 +234,15 @@ const HomeScreen = () => {
           />
         }
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
+        keyboardDismissMode="on-drag"
       />
+
+      {/* ── FAB ── */}
+      <TouchableOpacity style={styles.fab} onPress={handleNavigateToAdd} activeOpacity={0.85}>
+        <Ionicons name="add" size={20} color="#FFFFFF" />
+        <Text style={styles.fabText}>New</Text>
+      </TouchableOpacity>
 
       {/* ── Options bottom sheet ─────────────────────────── */}
       <Modal
@@ -230,7 +308,6 @@ const HomeScreen = () => {
                 showsVerticalScrollIndicator={false}
                 bounces
               >
-                {/* Image with floating X */}
                 <View style={styles.detailImageWrap}>
                   {selectedEntry.imageUri ? (
                     <Image
@@ -255,19 +332,14 @@ const HomeScreen = () => {
                   </View>
                 </View>
 
-                {/* Body */}
                 <View style={styles.detailBody}>
                   <Text style={styles.detailTitle}>{selectedEntry.title}</Text>
-
                   {selectedEntry.description?.trim().length > 0 && (
                     <Text style={styles.detailDescription}>
                       {selectedEntry.description}
                     </Text>
                   )}
-
                   <View style={styles.detailDivider} />
-
-                  {/* Meta card */}
                   <View style={styles.detailMetaCard}>
                     <View style={styles.detailMetaRow}>
                       <View style={styles.detailMetaIconWrap}>
@@ -303,8 +375,6 @@ const HomeScreen = () => {
                       </View>
                     </View>
                   </View>
-
-                  {/* Action buttons */}
                   <View style={styles.detailActionRow}>
                     <TouchableOpacity
                       style={styles.detailEditBtn}
@@ -314,7 +384,6 @@ const HomeScreen = () => {
                       <Ionicons name="pencil-outline" size={15} color={colors.accent} />
                       <Text style={styles.detailEditBtnText}>Edit Entry</Text>
                     </TouchableOpacity>
-
                     <TouchableOpacity
                       style={styles.detailRemoveBtn}
                       onPress={() => handleRemove(selectedEntry)}

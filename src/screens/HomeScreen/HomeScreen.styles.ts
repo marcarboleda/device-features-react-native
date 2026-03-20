@@ -11,7 +11,7 @@ export const createStyles = (colors: ThemeColors) =>
     // ── Header ────────────────────────────────────────────────
     header: {
       paddingTop: Platform.OS === 'ios' ? 58 : 42,
-      paddingBottom: 16,
+      paddingBottom: 14,
       paddingHorizontal: 20,
       backgroundColor: colors.headerBg,
       flexDirection: 'row',
@@ -52,24 +52,69 @@ export const createStyles = (colors: ThemeColors) =>
       shadowRadius: 4,
       elevation: 2,
     },
-    addBtn: {
+
+    // ── Search bar ────────────────────────────────────────────
+    searchContainer: {
+      paddingHorizontal: 16,
+      paddingTop: 12,
+      paddingBottom: 10,
+      backgroundColor: colors.headerBg,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border,
+    },
+    searchWrap: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 5,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 14,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border,
+      paddingHorizontal: 12,
+      height: 44,
+      gap: 8,
+    },
+    searchWrapActive: {
+      borderColor: colors.accent,
+      backgroundColor: colors.accentDim,
+    },
+    searchInput: {
+      flex: 1,
+      fontSize: 15,
+      color: colors.text,
+      paddingVertical: 0,
+    },
+    searchClearBtn: {
+      width: 22,
+      height: 22,
+      borderRadius: 11,
+      backgroundColor: colors.textMuted + '55',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+
+    // ── FAB ───────────────────────────────────────────────────
+    fab: {
+      position: 'absolute',
+      bottom: Platform.OS === 'ios' ? 40 : 28,
+      right: 20,
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 7,
       backgroundColor: colors.accent,
-      paddingHorizontal: 16,
-      paddingVertical: 10,
+      paddingHorizontal: 22,
+      paddingVertical: 15,
       borderRadius: 50,
       shadowColor: colors.accent,
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.3,
-      shadowRadius: 6,
-      elevation: 4,
+      shadowOffset: { width: 0, height: 6 },
+      shadowOpacity: 0.4,
+      shadowRadius: 14,
+      elevation: 8,
     },
-    addBtnText: {
+    fabText: {
       color: colors.white,
-      fontSize: 13,
-      fontWeight: '700',
+      fontSize: 15,
+      fontWeight: '800',
+      letterSpacing: 0.1,
     },
 
     // ── List ──────────────────────────────────────────────────
@@ -98,10 +143,7 @@ export const createStyles = (colors: ThemeColors) =>
       height: 185,
       backgroundColor: colors.surfaceElevated,
     },
-    cardImage: {
-      width: '100%',
-      height: '100%',
-    },
+    cardImage: { width: '100%', height: '100%' },
     cardImagePlaceholder: {
       flex: 1,
       alignItems: 'center',
@@ -168,30 +210,35 @@ export const createStyles = (colors: ThemeColors) =>
       fontWeight: '500',
     },
 
-    // ── Empty state ────────────────────────────────────────────
+    // ── Empty state (shared base) ──────────────────────────────
     emptyWrapper: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: 48,
+      paddingHorizontal: 32,
       paddingBottom: 80,
     },
     emptyIconWrap: {
       width: 88,
       height: 88,
       borderRadius: 44,
-      backgroundColor: colors.surfaceElevated,
-      borderWidth: 1,
+      backgroundColor: colors.surface,
+      borderWidth: StyleSheet.hairlineWidth,
       borderColor: colors.border,
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 22,
+      marginBottom: 24,
+      shadowColor: '#000',
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.06,
+      shadowRadius: 8,
+      elevation: 3,
     },
     emptyTitle: {
       fontSize: 22,
-      fontWeight: '800',
+      fontWeight: '900',
       color: colors.text,
-      marginBottom: 8,
+      marginBottom: 10,
       letterSpacing: -0.5,
       textAlign: 'center',
     },
@@ -199,28 +246,49 @@ export const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       color: colors.textSecondary,
       textAlign: 'center',
-      lineHeight: 21,
-      marginBottom: 28,
+      lineHeight: 22,
+      marginBottom: 32,
     },
     emptyBtn: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 7,
+      gap: 8,
       backgroundColor: colors.accent,
-      paddingHorizontal: 26,
-      paddingVertical: 14,
+      paddingHorizontal: 28,
+      paddingVertical: 15,
       borderRadius: 50,
       shadowColor: colors.accent,
       shadowOffset: { width: 0, height: 4 },
-      shadowOpacity: 0.3,
-      shadowRadius: 8,
+      shadowOpacity: 0.35,
+      shadowRadius: 10,
       elevation: 5,
     },
     emptyBtnText: {
       color: colors.white,
-      fontSize: 14,
-      fontWeight: '700',
+      fontSize: 15,
+      fontWeight: '800',
+      letterSpacing: 0.1,
     },
+
+    // ── No results (search) — same structure as emptyWrapper ──
+    clearSearchBtn: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      paddingHorizontal: 28,
+      paddingVertical: 15,
+      borderRadius: 50,
+      borderWidth: 1.5,
+      borderColor: colors.accent,
+      backgroundColor: colors.accentDim,
+    },
+    clearSearchBtnText: {
+      color: colors.accent,
+      fontSize: 15,
+      fontWeight: '800',
+      letterSpacing: 0.1,
+    },
+
     loadingWrapper: {
       flex: 1,
       alignItems: 'center',
@@ -308,9 +376,7 @@ export const createStyles = (colors: ThemeColors) =>
       flexDirection: 'column',
       justifyContent: 'flex-end',
     },
-    detailBackdrop: {
-      flex: 1,
-    },
+    detailBackdrop: { flex: 1 },
     detailSheet: {
       height: height * 0.92,
       backgroundColor: colors.modalBg,
@@ -318,33 +384,10 @@ export const createStyles = (colors: ThemeColors) =>
       borderTopRightRadius: 28,
       overflow: 'hidden',
     },
-
-    // Top bar: just the X button, no title, no handle pill
-    detailTopBar: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'flex-end',
-      paddingHorizontal: 16,
-      paddingTop: 16,
-      paddingBottom: 4,
-    },
-    detailCloseBtn: {
-      width: 36,
-      height: 36,
-      borderRadius: 18,
-      backgroundColor: 'rgba(0,0,0,0.45)',
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-
-    detailScroll: {
-      flex: 1,
-    },
+    detailScroll: { flex: 1 },
     detailScrollContent: {
       paddingBottom: Platform.OS === 'ios' ? 80 : 60,
     },
-
-    // Image fills top, X floats over it
     detailImageWrap: {
       width: '100%',
       height: 300,
@@ -360,10 +403,15 @@ export const createStyles = (colors: ThemeColors) =>
       paddingHorizontal: 16,
       paddingTop: 16,
     },
-    detailImage: {
-      width: '100%',
-      height: '100%',
+    detailCloseBtn: {
+      width: 36,
+      height: 36,
+      borderRadius: 18,
+      backgroundColor: 'rgba(0,0,0,0.45)',
+      alignItems: 'center',
+      justifyContent: 'center',
     },
+    detailImage: { width: '100%', height: '100%' },
     detailImagePlaceholder: {
       flex: 1,
       alignItems: 'center',
@@ -375,7 +423,6 @@ export const createStyles = (colors: ThemeColors) =>
       color: colors.textMuted,
       letterSpacing: 1,
     },
-
     detailBody: {
       paddingHorizontal: 20,
       paddingTop: 22,
@@ -442,7 +489,6 @@ export const createStyles = (colors: ThemeColors) =>
       lineHeight: 19,
     },
     detailMetaAccent: { color: colors.accent },
-    // ── Detail action buttons ──────────────────────────────────
     detailActionRow: {
       flexDirection: 'row',
       gap: 10,

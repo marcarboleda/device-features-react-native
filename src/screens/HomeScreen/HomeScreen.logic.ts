@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Alert } from 'react-native';
 import { useFocusEffect, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
@@ -16,6 +16,7 @@ export const useHomeLogic = () => {
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [optionsEntry, setOptionsEntry] = useState<TravelEntry | null>(null);
   const [optionsModalVisible, setOptionsModalVisible] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const fetchEntries = async () => {
     try {
@@ -41,6 +42,27 @@ export const useHomeLogic = () => {
     setRefreshing(false);
   };
 
+  // Filter entries by title, address, or formatted date — all client-side
+  const filteredEntries = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    if (!q) return entries;
+    return entries.filter((entry) => {
+      const dateStr = new Date(entry.timestamp).toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+      }).toLowerCase();
+      return (
+        entry.title?.toLowerCase().includes(q) ||
+        entry.address?.toLowerCase().includes(q) ||
+        dateStr.includes(q)
+      );
+    });
+  }, [entries, searchQuery]);
+
+  const handleClearSearch = () => setSearchQuery('');
+
   const handleOpenEntry = (entry: TravelEntry) => {
     if (!entry || !entry.id) return;
     setSelectedEntry(entry);
@@ -63,15 +85,12 @@ export const useHomeLogic = () => {
     setOptionsEntry(null);
   };
 
-  // Used by the options bottom sheet (reads optionsEntry)
   const handleEdit = () => {
     if (!optionsEntry) return;
     handleCloseOptions();
     navigation.navigate('EditEntry', { entry: optionsEntry });
   };
 
-  // Used by the detail modal — navigates directly with the given entry,
-  // no options sheet involved at all
   const handleEditEntry = (entry: TravelEntry) => {
     if (!entry || !entry.id) return;
     setDetailModalVisible(false);
@@ -117,6 +136,10 @@ export const useHomeLogic = () => {
 
   return {
     entries,
+    filteredEntries,
+    searchQuery,
+    setSearchQuery,
+    handleClearSearch,
     loading,
     refreshing,
     selectedEntry,
@@ -129,7 +152,7 @@ export const useHomeLogic = () => {
     handleOpenOptions,
     handleCloseOptions,
     handleEdit,
-    handleEditEntry,   // ← new: used by detail modal
+    handleEditEntry,
     handleRemove,
     handleNavigateToAdd,
   };
