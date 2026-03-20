@@ -39,6 +39,9 @@ const AddEntryScreen = () => {
   const [titleFocused, setTitleFocused] = useState(false);
   const [descFocused, setDescFocused] = useState(false);
 
+  // Post is ready only when photo is taken and title is filled
+  const canPost = !!imageUri && title.trim().length > 0;
+
   const scrollToBottom = (delay = 300) => {
     setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
@@ -47,6 +50,7 @@ const AddEntryScreen = () => {
 
   return (
     <View style={styles.container}>
+
       {/* ── Header ── */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -61,21 +65,7 @@ const AddEntryScreen = () => {
           <Text style={styles.headerTitle}>New Entry</Text>
           <Text style={styles.headerSub}>Capture this moment</Text>
         </View>
-        <TouchableOpacity
-          style={[styles.saveBtn, saving && styles.saveBtnDisabled]}
-          onPress={handleSave}
-          activeOpacity={0.85}
-          disabled={saving}
-        >
-          {saving ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <>
-              <Ionicons name="checkmark" size={15} color="#FFFFFF" />
-              <Text style={styles.saveBtnText}>Post</Text>
-            </>
-          )}
-        </TouchableOpacity>
+        <View style={{ width: 42 }} />
       </View>
 
       <ScrollView
@@ -109,7 +99,6 @@ const AddEntryScreen = () => {
               <Text style={[styles.fieldBadge, styles.fieldBadgeRequired]}>Required</Text>
             </View>
             <Text style={styles.fieldHint}>Take a photo to capture this travel moment</Text>
-
             <View style={styles.cameraInner}>
               {!imageUri ? (
                 <View style={styles.photoPlaceholder}>
@@ -166,7 +155,6 @@ const AddEntryScreen = () => {
                 </>
               )}
             </View>
-
             {!!photoError && (
               <Text style={styles.photoErrorText}>{photoError}</Text>
             )}
@@ -249,6 +237,29 @@ const AddEntryScreen = () => {
 
         </View>
       </ScrollView>
+
+      {/* ── Bottom save bar ── */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          style={[
+            styles.saveBtn,
+            (!canPost || saving) && styles.saveBtnDisabled,
+          ]}
+          onPress={handleSave}
+          activeOpacity={canPost ? 0.85 : 1}
+          disabled={!canPost || saving}
+        >
+          {saving ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.saveBtnText}>Post Entry</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 };

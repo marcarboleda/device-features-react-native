@@ -34,6 +34,12 @@ const EditEntryScreen = () => {
   const [titleFocused, setTitleFocused] = useState(false);
   const [descFocused, setDescFocused] = useState(false);
 
+  // Disabled if nothing changed or title is empty
+  const hasChanges =
+    title.trim() !== (entry.title ?? '').trim() ||
+    description.trim() !== (entry.description ?? '').trim();
+  const canSave = hasChanges && title.trim().length > 0;
+
   const scrollToEnd = (delay = 300) => {
     setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
@@ -42,6 +48,7 @@ const EditEntryScreen = () => {
 
   return (
     <View style={styles.container}>
+
       {/* ── Header ── */}
       <View style={styles.header}>
         <TouchableOpacity
@@ -56,21 +63,7 @@ const EditEntryScreen = () => {
           <Text style={styles.headerTitle}>Edit Entry</Text>
           <Text style={styles.headerSub}>Update this memory</Text>
         </View>
-        <TouchableOpacity
-          style={[styles.saveBtn, saving && styles.saveBtnDisabled]}
-          onPress={handleSave}
-          activeOpacity={0.85}
-          disabled={saving}
-        >
-          {saving ? (
-            <ActivityIndicator size="small" color="#FFFFFF" />
-          ) : (
-            <>
-              <Ionicons name="checkmark" size={15} color="#FFFFFF" />
-              <Text style={styles.saveBtnText}>Save</Text>
-            </>
-          )}
-        </TouchableOpacity>
+        <View style={{ width: 42 }} />
       </View>
 
       <ScrollView
@@ -96,7 +89,6 @@ const EditEntryScreen = () => {
               <Text style={[styles.fieldBadge, styles.fieldBadgeLocked]}>Locked</Text>
             </View>
             <Text style={styles.fieldHint}>Photo and location cannot be changed</Text>
-
             <View style={styles.cameraInner}>
               {entry.imageUri ? (
                 <Image
@@ -119,7 +111,6 @@ const EditEntryScreen = () => {
                 </View>
               </View>
             </View>
-
             <View style={styles.readonlyBadge}>
               <Ionicons name="lock-closed" size={10} color={colors.textMuted} />
               <Text style={styles.readonlyText}>Photo and location cannot be changed</Text>
@@ -203,6 +194,29 @@ const EditEntryScreen = () => {
 
         </View>
       </ScrollView>
+
+      {/* ── Bottom save bar ── */}
+      <View style={styles.bottomBar}>
+        <TouchableOpacity
+          style={[
+            styles.saveBtn,
+            (!canSave || saving) && styles.saveBtnDisabled,
+          ]}
+          onPress={handleSave}
+          activeOpacity={canSave ? 0.85 : 1}
+          disabled={!canSave || saving}
+        >
+          {saving ? (
+            <ActivityIndicator size="small" color="#FFFFFF" />
+          ) : (
+            <>
+              <Ionicons name="checkmark-circle" size={18} color="#FFFFFF" />
+              <Text style={styles.saveBtnText}>Save Changes</Text>
+            </>
+          )}
+        </TouchableOpacity>
+      </View>
+
     </View>
   );
 };

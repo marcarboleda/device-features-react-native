@@ -1,13 +1,11 @@
 import { StyleSheet, Platform } from 'react-native';
 import { ThemeColors } from '../../context/ThemeContext';
-
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
     },
-
     // ── Header ────────────────────────────────────────────────
     header: {
       paddingTop: Platform.OS === 'ios' ? 58 : 42,
@@ -50,34 +48,39 @@ export const createStyles = (colors: ThemeColors) =>
       marginTop: 2,
       letterSpacing: 0.2,
     },
+    // ── Bottom save bar ───────────────────────────────────────
+    bottomBar: {
+      paddingHorizontal: 18,
+      paddingTop: 12,
+      paddingBottom: Platform.OS === 'ios' ? 36 : 20,
+      backgroundColor: colors.headerBg,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: colors.border,
+    },
     saveBtn: {
       backgroundColor: colors.accent,
-      paddingHorizontal: 20,
-      paddingVertical: 10,
+      paddingVertical: 16,
       borderRadius: 50,
-      minWidth: 76,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
-      gap: 6,
+      gap: 8,
       shadowColor: colors.accent,
       shadowOffset: { width: 0, height: 4 },
       shadowOpacity: 0.35,
-      shadowRadius: 8,
+      shadowRadius: 10,
       elevation: 5,
     },
     saveBtnDisabled: { opacity: 0.45, shadowOpacity: 0 },
     saveBtnText: {
       color: '#FFFFFF',
-      fontSize: 14,
+      fontSize: 16,
       fontWeight: '800',
       letterSpacing: 0.2,
     },
-
     // ── Scroll ────────────────────────────────────────────────
     scroll: { flex: 1 },
-    scrollContent: { paddingBottom: 140 },
-
+    scrollContent: { paddingBottom: 24 },
     // ── Info bar ──────────────────────────────────────────────
     infoBar: {
       flexDirection: 'row',
@@ -102,14 +105,12 @@ export const createStyles = (colors: ThemeColors) =>
       fontWeight: '500',
       lineHeight: 18,
     },
-
     // ── Form section ──────────────────────────────────────────
     formSection: {
       marginHorizontal: 18,
       marginTop: 18,
       gap: 16,
     },
-
     // ── Field card — shared by Photo, Title, Description ──────
     fieldCard: {
       backgroundColor: colors.surface,
@@ -139,7 +140,6 @@ export const createStyles = (colors: ThemeColors) =>
       shadowOpacity: 0.1,
       shadowRadius: 8,
     },
-
     // ── Field header row ──────────────────────────────────────
     fieldHeader: {
       flexDirection: 'row',
@@ -193,16 +193,13 @@ export const createStyles = (colors: ThemeColors) =>
       lineHeight: 17,
       marginTop: 4,
     },
-
     // ── Camera inner container ────────────────────────────────
     cameraInner: {
       borderRadius: 12,
       overflow: 'hidden',
       backgroundColor: colors.surfaceElevated,
     },
-    cameraInnerError: {
-      // error is shown at fieldCard level
-    },
+    cameraInnerError: {},
     photoPlaceholder: {
       height: 190,
       alignItems: 'center',
@@ -305,7 +302,6 @@ export const createStyles = (colors: ThemeColors) =>
       color: colors.danger,
       marginTop: 8,
     },
-
     // Edit screen — readonly badge below photo
     readonlyBadge: {
       flexDirection: 'row',
@@ -322,7 +318,6 @@ export const createStyles = (colors: ThemeColors) =>
       color: colors.textMuted,
       fontWeight: '500',
     },
-
     // ── Text inputs ───────────────────────────────────────────
     input: {
       fontSize: 15,
