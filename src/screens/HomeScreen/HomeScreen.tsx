@@ -34,6 +34,7 @@ const HomeScreen = () => {
     handleOpenOptions,
     handleCloseOptions,
     handleEdit,
+    handleEditEntry,
     handleRemove,
     handleNavigateToAdd,
   } = useHomeLogic();
@@ -45,7 +46,6 @@ const HomeScreen = () => {
       day: 'numeric',
       year: 'numeric',
     });
-
   const formatTime = (ts: number) =>
     new Date(ts).toLocaleTimeString('en-US', {
       hour: '2-digit',
@@ -60,11 +60,7 @@ const HomeScreen = () => {
     >
       <View style={styles.cardImageWrap}>
         {item.imageUri ? (
-          <Image
-            source={{ uri: item.imageUri }}
-            style={styles.cardImage}
-            resizeMode="cover"
-          />
+          <Image source={{ uri: item.imageUri }} style={styles.cardImage} resizeMode="cover" />
         ) : (
           <View style={styles.cardImagePlaceholder}>
             <Ionicons name="image-outline" size={28} color={colors.textMuted} />
@@ -83,7 +79,7 @@ const HomeScreen = () => {
             activeOpacity={0.7}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="ellipsis-horizontal" size={18} color={colors.textSecondary} />
+            <Ionicons name="ellipsis-horizontal" size={17} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
         {item.description?.trim().length > 0 && (
@@ -106,17 +102,13 @@ const HomeScreen = () => {
   const renderEmpty = () => (
     <View style={styles.emptyWrapper}>
       <View style={styles.emptyIconWrap}>
-        <Ionicons name="map-outline" size={36} color={colors.textMuted} />
+        <Ionicons name="map-outline" size={38} color={colors.textMuted} />
       </View>
       <Text style={styles.emptyTitle}>No Entries Yet</Text>
       <Text style={styles.emptyBody}>
         Start documenting your travels. Every journey deserves to be remembered.
       </Text>
-      <TouchableOpacity
-        style={styles.emptyBtn}
-        onPress={handleNavigateToAdd}
-        activeOpacity={0.85}
-      >
+      <TouchableOpacity style={styles.emptyBtn} onPress={handleNavigateToAdd} activeOpacity={0.85}>
         <Ionicons name="add" size={18} color={colors.white} />
         <Text style={styles.emptyBtnText}>Add First Entry</Text>
       </TouchableOpacity>
@@ -134,6 +126,7 @@ const HomeScreen = () => {
 
   return (
     <View style={styles.container}>
+      {/* ── Header ── */}
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.appName}>
@@ -149,11 +142,7 @@ const HomeScreen = () => {
               color={colors.textSecondary}
             />
           </TouchableOpacity>
-          <TouchableOpacity
-            style={styles.addBtn}
-            onPress={handleNavigateToAdd}
-            activeOpacity={0.85}
-          >
+          <TouchableOpacity style={styles.addBtn} onPress={handleNavigateToAdd} activeOpacity={0.85}>
             <Ionicons name="add" size={16} color={colors.white} />
             <Text style={styles.addBtnText}>New</Text>
           </TouchableOpacity>
@@ -165,9 +154,7 @@ const HomeScreen = () => {
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         ListEmptyComponent={renderEmpty}
-        contentContainerStyle={
-          entries.length === 0 ? { flex: 1 } : styles.listContent
-        }
+        contentContainerStyle={entries.length === 0 ? { flex: 1 } : styles.listContent}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
@@ -194,11 +181,7 @@ const HomeScreen = () => {
                 <Text style={styles.optionsTitle} numberOfLines={1}>
                   {optionsEntry?.title ?? 'Entry Options'}
                 </Text>
-                <TouchableOpacity
-                  style={styles.optionRow}
-                  onPress={handleEdit}
-                  activeOpacity={0.8}
-                >
+                <TouchableOpacity style={styles.optionRow} onPress={handleEdit} activeOpacity={0.8}>
                   <View style={[styles.optionIconWrap, { backgroundColor: colors.accentDim }]}>
                     <Ionicons name="pencil-outline" size={18} color={colors.accent} />
                   </View>
@@ -227,36 +210,19 @@ const HomeScreen = () => {
         </TouchableWithoutFeedback>
       </Modal>
 
-      {/* ── Detail modal — fully scrollable ─────────────── */}
+      {/* ── Detail modal ─────────────────────────────────── */}
       <Modal
         visible={detailModalVisible}
         transparent
         animationType="slide"
         onRequestClose={handleCloseDetailModal}
       >
-        {/*
-          Key pattern: split the overlay into two layers stacked via flexbox.
-          - detailBackdrop: flex:1 transparent area above the sheet — closes on tap
-          - detailSheet: fixed height, plain View — never fires close, never blocks scroll
-        */}
         <View style={styles.detailOverlay}>
           <TouchableWithoutFeedback onPress={handleCloseDetailModal}>
             <View style={styles.detailBackdrop} />
           </TouchableWithoutFeedback>
 
           <View style={styles.detailSheet}>
-            <View style={styles.detailHandle} />
-            <View style={styles.detailHeader}>
-              <Text style={styles.detailHeaderTitle}>Entry Detail</Text>
-              <TouchableOpacity
-                style={styles.detailCloseBtn}
-                onPress={handleCloseDetailModal}
-                activeOpacity={0.7}
-              >
-                <Ionicons name="close" size={17} color={colors.textSecondary} />
-              </TouchableOpacity>
-            </View>
-
             {selectedEntry && (
               <ScrollView
                 style={styles.detailScroll}
@@ -264,6 +230,7 @@ const HomeScreen = () => {
                 showsVerticalScrollIndicator={false}
                 bounces
               >
+                {/* Image with floating X */}
                 <View style={styles.detailImageWrap}>
                   {selectedEntry.imageUri ? (
                     <Image
@@ -277,15 +244,30 @@ const HomeScreen = () => {
                       <Text style={styles.detailImagePlaceholderText}>NO PHOTO</Text>
                     </View>
                   )}
+                  <View style={styles.detailImageAbsoluteBar}>
+                    <TouchableOpacity
+                      style={styles.detailCloseBtn}
+                      onPress={handleCloseDetailModal}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons name="close" size={18} color="#FFFFFF" />
+                    </TouchableOpacity>
+                  </View>
                 </View>
+
+                {/* Body */}
                 <View style={styles.detailBody}>
                   <Text style={styles.detailTitle}>{selectedEntry.title}</Text>
+
                   {selectedEntry.description?.trim().length > 0 && (
                     <Text style={styles.detailDescription}>
                       {selectedEntry.description}
                     </Text>
                   )}
+
                   <View style={styles.detailDivider} />
+
+                  {/* Meta card */}
                   <View style={styles.detailMetaCard}>
                     <View style={styles.detailMetaRow}>
                       <View style={styles.detailMetaIconWrap}>
@@ -321,14 +303,27 @@ const HomeScreen = () => {
                       </View>
                     </View>
                   </View>
-                  <TouchableOpacity
-                    style={styles.detailRemoveBtn}
-                    onPress={() => selectedEntry && handleRemove(selectedEntry)}
-                    activeOpacity={0.75}
-                  >
-                    <Ionicons name="trash-outline" size={15} color={colors.danger} />
-                    <Text style={styles.detailRemoveBtnText}>Remove This Entry</Text>
-                  </TouchableOpacity>
+
+                  {/* Action buttons */}
+                  <View style={styles.detailActionRow}>
+                    <TouchableOpacity
+                      style={styles.detailEditBtn}
+                      onPress={() => handleEditEntry(selectedEntry)}
+                      activeOpacity={0.8}
+                    >
+                      <Ionicons name="pencil-outline" size={15} color={colors.accent} />
+                      <Text style={styles.detailEditBtnText}>Edit Entry</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                      style={styles.detailRemoveBtn}
+                      onPress={() => handleRemove(selectedEntry)}
+                      activeOpacity={0.75}
+                    >
+                      <Ionicons name="trash-outline" size={15} color={colors.danger} />
+                      <Text style={styles.detailRemoveBtnText}>Remove</Text>
+                    </TouchableOpacity>
+                  </View>
                 </View>
               </ScrollView>
             )}

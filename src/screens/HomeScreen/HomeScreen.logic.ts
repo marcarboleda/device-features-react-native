@@ -63,10 +63,20 @@ export const useHomeLogic = () => {
     setOptionsEntry(null);
   };
 
+  // Used by the options bottom sheet (reads optionsEntry)
   const handleEdit = () => {
     if (!optionsEntry) return;
     handleCloseOptions();
     navigation.navigate('EditEntry', { entry: optionsEntry });
+  };
+
+  // Used by the detail modal — navigates directly with the given entry,
+  // no options sheet involved at all
+  const handleEditEntry = (entry: TravelEntry) => {
+    if (!entry || !entry.id) return;
+    setDetailModalVisible(false);
+    setSelectedEntry(null);
+    navigation.navigate('EditEntry', { entry });
   };
 
   const handleRemove = (entry: TravelEntry) => {
@@ -75,7 +85,6 @@ export const useHomeLogic = () => {
       return;
     }
     handleCloseOptions();
-
     Alert.alert(
       'Remove Entry',
       `Are you sure you want to remove "${entry.title}"?\n\nThis action cannot be undone.`,
@@ -120,6 +129,7 @@ export const useHomeLogic = () => {
     handleOpenOptions,
     handleCloseOptions,
     handleEdit,
+    handleEditEntry,   // ← new: used by detail modal
     handleRemove,
     handleNavigateToAdd,
   };
