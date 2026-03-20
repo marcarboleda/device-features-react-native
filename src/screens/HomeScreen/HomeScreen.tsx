@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,17 +11,140 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   TextInput,
+  Animated,
+  StyleSheet,
 } from 'react-native';
+import { Swipeable } from 'react-native-gesture-handler';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
 import { TravelEntry } from '../../types';
 import { useHomeLogic } from './HomeScreen.logic';
 import { createStyles } from './HomeScreen.styles';
 
+// ── SwipeableCard — proper component so useRef is valid ──────────────────────
+interface SwipeableCardProps {
+  item: TravelEntry;
+  colors: any;
+  styles: any;
+  openSwipeableRef: React.MutableRefObject<Swipeable | null>;
+  onPress: () => void;
+  onOptions: () => void;
+  onDelete: () => void;
+  formatDate: (ts: number) => string;
+}
+
+const SwipeableCard = ({
+  item,
+  colors,
+  styles,
+  openSwipeableRef,
+  onPress,
+  onOptions,
+  onDelete,
+  formatDate,
+}: SwipeableCardProps) => {
+  const swipeRef = useRef<Swipeable | null>(null);
+
+  const renderRightActions = (
+    progress: Animated.AnimatedInterpolation<number>
+  ) => {
+    const translateX = progress.interpolate({
+      inputRange: [0, 1],
+      outputRange: [80, 0],
+    });
+    return (
+      <Animated.View style={[styles.swipeDeleteWrap, { transform: [{ translateX }] }]}>
+        <TouchableOpacity
+          style={styles.swipeDeleteBtn}
+          activeOpacity={0.85}
+          onPress={() => {
+            swipeRef.current?.close();
+            onDelete();
+          }}
+        >
+          <Ionicons name="trash" size={22} color="#FFFFFF" />
+          <Text style={styles.swipeDeleteText}>Delete</Text>
+        </TouchableOpacity>
+      </Animated.View>
+    );
+  };
+
+  return (
+    <Swipeable
+      ref={swipeRef}
+      friction={2}
+      rightThreshold={40}
+      renderRightActions={renderRightActions}
+      onSwipeableWillOpen={() => {
+        if (
+          openSwipeableRef.current &&
+          openSwipeableRef.current !== swipeRef.current
+        ) {
+          openSwipeableRef.current.close();
+        }
+        openSwipeableRef.current = swipeRef.current;
+      }}
+      onSwipeableClose={() => {
+        if (openSwipeableRef.current === swipeRef.current) {
+          openSwipeableRef.current = null;
+        }
+      }}
+      containerStyle={styles.swipeableContainer}
+    >
+      <TouchableOpacity
+        style={styles.card}
+        onPress={onPress}
+        activeOpacity={0.88}
+      >
+        <View style={styles.cardImageWrap}>
+          {item.imageUri ? (
+            <Image source={{ uri: item.imageUri }} style={styles.cardImage} resizeMode="cover" />
+          ) : (
+            <View style={styles.cardImagePlaceholder}>
+              <Ionicons name="image-outline" size={28} color={colors.textMuted} />
+              <Text style={styles.cardImagePlaceholderText}>NO PHOTO</Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.cardBody}>
+          <View style={styles.cardTopRow}>
+            <Text style={styles.cardTitle} numberOfLines={1}>
+              {item.title || 'Untitled'}
+            </Text>
+            <TouchableOpacity
+              style={styles.optionsBtn}
+              onPress={onOptions}
+              activeOpacity={0.7}
+              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            >
+              <Ionicons name="ellipsis-horizontal" size={17} color={colors.textSecondary} />
+            </TouchableOpacity>
+          </View>
+          {item.description?.trim().length > 0 && (
+            <Text style={styles.cardDescription} numberOfLines={2}>
+              {item.description}
+            </Text>
+          )}
+          <View style={styles.cardFooter}>
+            <Ionicons name="location-outline" size={12} color={colors.accent} />
+            <Text style={styles.cardAddress} numberOfLines={1}>
+              {item.address || 'Location unavailable'}
+            </Text>
+            <Ionicons name="calendar-outline" size={11} color={colors.textMuted} />
+            <Text style={styles.cardDate}>{formatDate(item.timestamp)}</Text>
+          </View>
+        </View>
+      </TouchableOpacity>
+    </Swipeable>
+  );
+};
+
+// ── HomeScreen ────────────────────────────────────────────────────────────────
 const HomeScreen = () => {
   const { colors, isDark, toggleTheme } = useTheme();
   const styles = createStyles(colors);
   const [searchFocused, setSearchFocused] = useState(false);
+  const openSwipeableRef = useRef<Swipeable | null>(null);
 
   const {
     entries,
@@ -60,54 +183,19 @@ const HomeScreen = () => {
     });
 
   const renderItem = ({ item }: { item: TravelEntry }) => (
-    <TouchableOpacity
-      style={styles.card}
+    <SwipeableCard
+      item={item}
+      colors={colors}
+      styles={styles}
+      openSwipeableRef={openSwipeableRef}
       onPress={() => handleOpenEntry(item)}
-      activeOpacity={0.88}
-    >
-      <View style={styles.cardImageWrap}>
-        {item.imageUri ? (
-          <Image source={{ uri: item.imageUri }} style={styles.cardImage} resizeMode="cover" />
-        ) : (
-          <View style={styles.cardImagePlaceholder}>
-            <Ionicons name="image-outline" size={28} color={colors.textMuted} />
-            <Text style={styles.cardImagePlaceholderText}>NO PHOTO</Text>
-          </View>
-        )}
-      </View>
-      <View style={styles.cardBody}>
-        <View style={styles.cardTopRow}>
-          <Text style={styles.cardTitle} numberOfLines={1}>
-            {item.title || 'Untitled'}
-          </Text>
-          <TouchableOpacity
-            style={styles.optionsBtn}
-            onPress={() => handleOpenOptions(item)}
-            activeOpacity={0.7}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          >
-            <Ionicons name="ellipsis-horizontal" size={17} color={colors.textSecondary} />
-          </TouchableOpacity>
-        </View>
-        {item.description?.trim().length > 0 && (
-          <Text style={styles.cardDescription} numberOfLines={2}>
-            {item.description}
-          </Text>
-        )}
-        <View style={styles.cardFooter}>
-          <Ionicons name="location-outline" size={12} color={colors.accent} />
-          <Text style={styles.cardAddress} numberOfLines={1}>
-            {item.address || 'Location unavailable'}
-          </Text>
-          <Ionicons name="calendar-outline" size={11} color={colors.textMuted} />
-          <Text style={styles.cardDate}>{formatDate(item.timestamp)}</Text>
-        </View>
-      </View>
-    </TouchableOpacity>
+      onOptions={() => handleOpenOptions(item)}
+      onDelete={() => handleRemove(item)}
+      formatDate={formatDate}
+    />
   );
 
   const renderEmpty = () => {
-    // Case 1: truly empty — no entries at all
     if (entries.length === 0) {
       return (
         <View style={styles.emptyWrapper}>
@@ -129,8 +217,6 @@ const HomeScreen = () => {
         </View>
       );
     }
-
-    // Case 2: entries exist but search found nothing
     return (
       <View style={styles.emptyWrapper}>
         <View style={styles.emptyIconWrap}>
@@ -184,7 +270,7 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      {/* ── Search bar — only shown when entries exist ── */}
+      {/* ── Search bar ── */}
       {entries.length > 0 && (
         <View style={styles.searchContainer}>
           <View style={[styles.searchWrap, searchFocused && styles.searchWrapActive]}>
@@ -331,7 +417,6 @@ const HomeScreen = () => {
                     </TouchableOpacity>
                   </View>
                 </View>
-
                 <View style={styles.detailBody}>
                   <Text style={styles.detailTitle}>{selectedEntry.title}</Text>
                   {selectedEntry.description?.trim().length > 0 && (

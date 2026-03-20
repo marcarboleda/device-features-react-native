@@ -125,6 +125,33 @@ export const createStyles = (colors: ThemeColors) =>
       gap: 14,
     },
 
+    // ── Swipe to delete ───────────────────────────────────────
+    swipeableContainer: {
+      borderRadius: 20,
+      // Clips the swipe action to card radius
+      overflow: 'hidden',
+    },
+    swipeDeleteWrap: {
+      width: 80,
+      justifyContent: 'center',
+      alignItems: 'center',
+      backgroundColor: colors.danger,
+      borderTopRightRadius: 20,
+      borderBottomRightRadius: 20,
+    },
+    swipeDeleteBtn: {
+      flex: 1,
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 4,
+    },
+    swipeDeleteText: {
+      color: '#FFFFFF',
+      fontSize: 12,
+      fontWeight: '700',
+    },
+
     // ── Card ──────────────────────────────────────────────────
     card: {
       backgroundColor: colors.surface,
@@ -210,7 +237,7 @@ export const createStyles = (colors: ThemeColors) =>
       fontWeight: '500',
     },
 
-    // ── Empty state (shared base) ──────────────────────────────
+    // ── Empty states (shared structure) ───────────────────────
     emptyWrapper: {
       flex: 1,
       alignItems: 'center',
@@ -269,8 +296,6 @@ export const createStyles = (colors: ThemeColors) =>
       fontWeight: '800',
       letterSpacing: 0.1,
     },
-
-    // ── No results (search) — same structure as emptyWrapper ──
     clearSearchBtn: {
       flexDirection: 'row',
       alignItems: 'center',
