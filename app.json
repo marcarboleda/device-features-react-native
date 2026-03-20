@@ -1,30 +1,63 @@
 {
   "expo": {
     "name": "TravelDiary",
-    "slug": "TravelDiary",
+    "slug": "travel-diary",
     "version": "1.0.0",
+    "sdkVersion": "54.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
-    "userInterfaceStyle": "light",
-    "newArchEnabled": true,
+    "userInterfaceStyle": "automatic",
+    "newArchEnabled": false,
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#0A0A0A"
     },
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": false,
+      "bundleIdentifier": "com.yourname.traveldiary",
+      "infoPlist": {
+        "NSCameraUsageDescription": "Travel Diary needs camera access to capture your travel photos.",
+        "NSLocationWhenInUseUsageDescription": "Travel Diary needs your location to tag entries with your current address.",
+        "NSUserNotificationsUsageDescription": "Travel Diary sends you a notification when you save a travel entry."
+      }
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#0A0A0A"
       },
-      "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "package": "com.yourname.traveldiary",
+      "permissions": [
+        "CAMERA",
+        "ACCESS_FINE_LOCATION",
+        "ACCESS_COARSE_LOCATION",
+        "RECEIVE_BOOT_COMPLETED",
+        "VIBRATE",
+        "POST_NOTIFICATIONS"
+      ]
     },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    }
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/icon.png",
+          "color": "#1DA1F2",
+          "sounds": []
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "cameraPermission": "Travel Diary needs camera access to capture your travel photos."
+        }
+      ],
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "Travel Diary needs your location to tag entries with your current address."
+        }
+      ]
+    ]
   }
 }
