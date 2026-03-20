@@ -56,7 +56,7 @@ const AddEntryScreen = () => {
 
         <View style={styles.headerCenter}>
           <Text style={styles.headerTitle}>New Entry</Text>
-          <Text style={styles.headerSubtitle}>Capture this moment</Text>
+          <Text style={styles.headerSub}>Capture this moment</Text>
         </View>
 
         <TouchableOpacity
@@ -82,7 +82,9 @@ const AddEntryScreen = () => {
         <View style={[styles.photoSection, !!photoError && styles.photoSectionError]}>
           {!imageUri ? (
             <View style={styles.photoPlaceholder}>
-              <Text style={styles.photoPlaceholderEmoji}>📷</Text>
+              <View style={styles.photoPlaceholderIconWrap}>
+                <Text style={styles.photoPlaceholderIconText}>[ ]</Text>
+              </View>
               <Text style={styles.photoPlaceholderTitle}>No Photo Taken</Text>
               <Text style={styles.photoPlaceholderSub}>
                 Take a photo to capture and tag this travel moment
@@ -109,11 +111,10 @@ const AddEntryScreen = () => {
                 activeOpacity={0.8}
                 disabled={saving || loadingLocation}
               >
-                <Text>🔄</Text>
                 <Text style={styles.retakeBtnText}>Retake</Text>
               </TouchableOpacity>
               <View style={styles.addressBar}>
-                <Text>📍</Text>
+                <Text style={styles.addressBarLabel}>Loc</Text>
                 {loadingLocation ? (
                   <>
                     <Text style={styles.addressBarLoading}>Getting your location…</Text>
@@ -135,7 +136,10 @@ const AddEntryScreen = () => {
 
         <View style={styles.formSection}>
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Entry Title *</Text>
+            <View style={styles.fieldLabelRow}>
+              <Text style={styles.fieldLabel}>Entry Title</Text>
+              <Text style={styles.fieldRequired}>Required</Text>
+            </View>
             <Text style={styles.fieldHint}>Give this memory a meaningful name</Text>
             <TextInput
               style={[
@@ -153,28 +157,32 @@ const AddEntryScreen = () => {
               returnKeyType="next"
               editable={!saving}
             />
-            <View style={styles.charRow}>
+            <View style={styles.fieldFooter}>
               {titleError ? (
                 <Text style={styles.fieldError}>{titleError}</Text>
               ) : (
-                <Text
-                  style={[
-                    styles.charCount,
-                    title.length > 50 && styles.charCountWarn,
-                  ]}
-                >
-                  {title.length}/60
-                </Text>
+                <Text />
               )}
+              <Text
+                style={[
+                  styles.charCount,
+                  title.length > 50 && styles.charCountWarn,
+                ]}
+              >
+                {title.length}/60
+              </Text>
             </View>
           </View>
 
           <View style={styles.divider} />
 
           <View style={styles.fieldGroup}>
-            <Text style={styles.fieldLabel}>Description</Text>
+            <View style={styles.fieldLabelRow}>
+              <Text style={styles.fieldLabel}>Description</Text>
+              <Text style={styles.charCount}>Optional</Text>
+            </View>
             <Text style={styles.fieldHint}>
-              Describe what made this place special (optional)
+              Describe what made this place special
             </Text>
             <TextInput
               style={[
@@ -194,7 +202,8 @@ const AddEntryScreen = () => {
               blurOnSubmit
               editable={!saving}
             />
-            <View style={styles.charRow}>
+            <View style={styles.fieldFooter}>
+              <Text />
               <Text
                 style={[
                   styles.charCount,
@@ -208,9 +217,9 @@ const AddEntryScreen = () => {
         </View>
 
         <View style={styles.infoBox}>
-          <Text style={styles.infoBoxIcon}>ℹ️</Text>
+          <View style={styles.infoBoxBar} />
           <Text style={styles.infoBoxText}>
-            Your location is automatically captured when you take a photo. Going back without saving will discard this entry.
+            Location is automatically captured when you take a photo. Going back without saving will discard this entry.
           </Text>
         </View>
       </ScrollView>
