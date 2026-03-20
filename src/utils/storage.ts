@@ -46,3 +46,14 @@ export const removeEntry = async (id: string): Promise<boolean> => {
     return false;
   }
 };
+
+export const updateEntry = async (updated: TravelEntry): Promise<boolean> => {
+  try {
+    if (!updated || !updated.id) return false;
+    const existing = await loadEntries();
+    const mapped = existing.map((e) => (e.id === updated.id ? updated : e));
+    return await saveEntries(mapped);
+  } catch {
+    return false;
+  }
+};

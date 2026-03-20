@@ -8,38 +8,35 @@ import {
   TextInput,
   ActivityIndicator,
   Platform,
+  StyleSheet,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
-import { useAddEntryLogic } from './AddEntryScreen.logic';
-import { createStyles } from './AddEntryScreen.styles';
+import { useEditEntryLogic } from './EditEntryScreen.logic';
+import { createStyles } from '../AddEntryScreen/AddEntryScreen.styles';
 
-const AddEntryScreen = () => {
+const EditEntryScreen = () => {
   const { colors } = useTheme();
   const styles = createStyles(colors);
+  const local = localStyles(colors);
   const scrollRef = useRef<ScrollView>(null);
 
   const {
-    imageUri,
-    address,
+    entry,
     title,
     description,
-    loadingLocation,
     saving,
     titleError,
-    photoError,
     handleTitleChange,
     setDescription,
-    takePicture,
-    retakePicture,
     handleSave,
     handleBack,
-  } = useAddEntryLogic();
+  } = useEditEntryLogic();
 
   const [titleFocused, setTitleFocused] = useState(false);
   const [descFocused, setDescFocused] = useState(false);
 
-  const scrollToBottom = (delay = 300) => {
+  const scrollToEnd = (delay = 300) => {
     setTimeout(() => {
       scrollRef.current?.scrollToEnd({ animated: true });
     }, delay);
@@ -58,8 +55,8 @@ const AddEntryScreen = () => {
         </TouchableOpacity>
 
         <View style={styles.headerCenter}>
-          <Text style={styles.headerTitle}>New Entry</Text>
-          <Text style={styles.headerSub}>Capture this moment</Text>
+          <Text style={styles.headerTitle}>Edit Entry</Text>
+          <Text style={styles.headerSub}>Update this memory</Text>
         </View>
 
         <TouchableOpacity
@@ -73,7 +70,7 @@ const AddEntryScreen = () => {
           ) : (
             <>
               <Ionicons name="checkmark" size={15} color="#FFFFFF" />
-              <Text style={styles.saveBtnText}>Post</Text>
+              <Text style={styles.saveBtnText}>Save</Text>
             </>
           )}
         </TouchableOpacity>
@@ -88,80 +85,32 @@ const AddEntryScreen = () => {
         keyboardDismissMode="interactive"
         automaticallyAdjustKeyboardInsets={Platform.OS === 'ios'}
       >
-        {/* Info bar at top */}
-        <View style={styles.infoBar}>
-          <Ionicons name="information-circle" size={16} color={colors.accent} />
-          <Text style={styles.infoBarText}>
-            Location is auto-tagged when you take a photo. Going back without saving discards this entry.
-          </Text>
-        </View>
-
-        {/* Photo section */}
-        <View style={[styles.photoSection, !!photoError && styles.photoSectionError]}>
-          {!imageUri ? (
-            <View style={styles.photoPlaceholder}>
-              <View style={styles.photoPlaceholderIconCircle}>
-                <Ionicons name="camera" size={28} color={colors.accent} />
-              </View>
-              <Text style={styles.photoPlaceholderTitle}>Add a Photo</Text>
-              <Text style={styles.photoPlaceholderSub}>
-                Take a photo to capture and tag this travel moment
-              </Text>
-              <TouchableOpacity
-                style={styles.openCameraBtn}
-                onPress={takePicture}
-                activeOpacity={0.85}
-                disabled={saving}
-              >
-                <Ionicons name="camera-outline" size={15} color="#FFFFFF" />
-                <Text style={styles.openCameraBtnText}>Open Camera</Text>
-              </TouchableOpacity>
-            </View>
+        <View style={local.photoPreviewWrap}>
+          {entry.imageUri ? (
+            <Image
+              source={{ uri: entry.imageUri }}
+              style={local.photoPreview}
+              resizeMode="cover"
+            />
           ) : (
-            <>
-              <Image
-                source={{ uri: imageUri }}
-                style={styles.photoPreview}
-                resizeMode="cover"
-              />
-              <View style={styles.photoOverlayRow}>
-                <View style={styles.addressRow}>
-                  {loadingLocation ? (
-                    <>
-                      <ActivityIndicator size="small" color="#FFFFFF" />
-                      <Text style={styles.addressLoading}>Getting location…</Text>
-                    </>
-                  ) : (
-                    <>
-                      <Ionicons name="location" size={12} color="#FFFFFF" />
-                      <Text style={styles.addressText} numberOfLines={1}>
-                        {address || 'Location unavailable'}
-                      </Text>
-                    </>
-                  )}
-                </View>
-                <TouchableOpacity
-                  style={styles.retakeBtn}
-                  onPress={retakePicture}
-                  activeOpacity={0.8}
-                  disabled={saving || loadingLocation}
-                >
-                  <Ionicons name="camera-reverse-outline" size={13} color="#FFFFFF" />
-                  <Text style={styles.retakeBtnText}>Retake</Text>
-                </TouchableOpacity>
-              </View>
-            </>
+            <View style={local.photoPlaceholder}>
+              <Ionicons name="image-outline" size={32} color={colors.textMuted} />
+              <Text style={local.photoPlaceholderText}>No Photo</Text>
+            </View>
           )}
+          <View style={local.photoOverlay}>
+            <Ionicons name="location" size={12} color="#FFFFFF" />
+            <Text style={local.photoOverlayText} numberOfLines={1}>
+              {entry.address || 'Location unavailable'}
+            </Text>
+          </View>
+          <View style={local.readonlyBadge}>
+            <Ionicons name="lock-closed" size={10} color={colors.textMuted} />
+            <Text style={local.readonlyText}>Photo and location cannot be changed</Text>
+          </View>
         </View>
 
-        {!!photoError && (
-          <Text style={styles.photoErrorText}>{photoError}</Text>
-        )}
-
-        {/* Form fields */}
         <View style={styles.formSection}>
-
-          {/* Title */}
           <View
             style={[
               styles.fieldCard,
@@ -189,7 +138,7 @@ const AddEntryScreen = () => {
               onChangeText={handleTitleChange}
               onFocus={() => {
                 setTitleFocused(true);
-                scrollToBottom(300);
+                scrollToEnd(250);
               }}
               onBlur={() => setTitleFocused(false)}
               maxLength={60}
@@ -208,13 +157,7 @@ const AddEntryScreen = () => {
             </View>
           </View>
 
-          {/* Description */}
-          <View
-            style={[
-              styles.fieldCard,
-              descFocused && styles.fieldCardFocused,
-            ]}
-          >
+          <View style={[styles.fieldCard, descFocused && styles.fieldCardFocused]}>
             <View style={styles.fieldHeader}>
               <View style={styles.fieldLabelRow}>
                 <Ionicons
@@ -229,13 +172,13 @@ const AddEntryScreen = () => {
             <Text style={styles.fieldHint}>What made this place special?</Text>
             <TextInput
               style={[styles.input, styles.textArea]}
-              placeholder="Share your thoughts, feelings, or memorable details about this place…"
+              placeholder="Share your thoughts, feelings, or memorable details…"
               placeholderTextColor={colors.textMuted}
               value={description}
               onChangeText={setDescription}
               onFocus={() => {
                 setDescFocused(true);
-                scrollToBottom(300);
+                scrollToEnd(250);
               }}
               onBlur={() => setDescFocused(false)}
               multiline
@@ -251,11 +194,65 @@ const AddEntryScreen = () => {
               </Text>
             </View>
           </View>
-
         </View>
       </ScrollView>
     </View>
   );
 };
 
-export default AddEntryScreen;
+const localStyles = (colors: any) =>
+  StyleSheet.create({
+    photoPreviewWrap: {
+      marginHorizontal: 16,
+      marginTop: 14,
+      borderRadius: 16,
+      overflow: 'hidden',
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    photoPreview: {
+      width: '100%',
+      height: 170,
+    },
+    photoPlaceholder: {
+      height: 170,
+      backgroundColor: colors.surfaceElevated,
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 8,
+    },
+    photoPlaceholderText: {
+      fontSize: 13,
+      color: colors.textMuted,
+    },
+    photoOverlay: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 5,
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      backgroundColor: 'rgba(0,0,0,0.6)',
+    },
+    photoOverlayText: {
+      flex: 1,
+      fontSize: 11,
+      color: '#FFFFFF',
+      fontWeight: '500',
+    },
+    readonlyBadge: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 5,
+      paddingVertical: 7,
+      backgroundColor: colors.surfaceElevated,
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: colors.border,
+    },
+    readonlyText: {
+      fontSize: 11,
+      color: colors.textMuted,
+    },
+  });
+
+export default EditEntryScreen;

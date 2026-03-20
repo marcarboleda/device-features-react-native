@@ -1,7 +1,5 @@
-import { StyleSheet, Platform, Dimensions } from 'react-native';
+import { StyleSheet, Platform } from 'react-native';
 import { ThemeColors } from '../../context/ThemeContext';
-
-const { width } = Dimensions.get('window');
 
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
@@ -26,7 +24,7 @@ export const createStyles = (colors: ThemeColors) =>
       height: 40,
       borderRadius: 20,
       backgroundColor: colors.surfaceElevated,
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: 1,
       borderColor: colors.border,
       alignItems: 'center',
       justifyContent: 'center',
@@ -49,18 +47,16 @@ export const createStyles = (colors: ThemeColors) =>
     },
     saveBtn: {
       backgroundColor: colors.accent,
-      paddingHorizontal: 20,
+      paddingHorizontal: 18,
       paddingVertical: 9,
       borderRadius: 50,
-      minWidth: 76,
+      minWidth: 72,
       alignItems: 'center',
       justifyContent: 'center',
       flexDirection: 'row',
       gap: 6,
     },
-    saveBtnDisabled: {
-      opacity: 0.45,
-    },
+    saveBtnDisabled: { opacity: 0.45 },
     saveBtnText: {
       color: colors.white,
       fontSize: 14,
@@ -68,13 +64,36 @@ export const createStyles = (colors: ThemeColors) =>
     },
 
     scroll: { flex: 1 },
-    scrollContent: { paddingBottom: 80 },
+    scrollContent: { paddingBottom: 120 },
+
+    infoBar: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 8,
+      marginHorizontal: 16,
+      marginTop: 14,
+      marginBottom: 2,
+      paddingHorizontal: 14,
+      paddingVertical: 10,
+      backgroundColor: colors.accentDim,
+      borderRadius: 12,
+      borderWidth: 1,
+      borderColor: colors.accent + '33',
+    },
+    infoBarText: {
+      flex: 1,
+      fontSize: 12,
+      color: colors.accent,
+      fontWeight: '500',
+      lineHeight: 17,
+    },
 
     photoSection: {
-      margin: 16,
-      borderRadius: 20,
+      marginHorizontal: 16,
+      marginTop: 12,
+      borderRadius: 16,
       overflow: 'hidden',
-      borderWidth: StyleSheet.hairlineWidth,
+      borderWidth: 1,
       borderColor: colors.border,
       backgroundColor: colors.surfaceElevated,
     },
@@ -82,56 +101,54 @@ export const createStyles = (colors: ThemeColors) =>
       borderColor: colors.danger,
       borderWidth: 1.5,
     },
-
     photoPlaceholder: {
-      height: 240,
+      height: 190,
       alignItems: 'center',
       justifyContent: 'center',
-      gap: 10,
+      gap: 8,
       paddingHorizontal: 32,
     },
     photoPlaceholderIconCircle: {
-      width: 72,
-      height: 72,
-      borderRadius: 36,
+      width: 64,
+      height: 64,
+      borderRadius: 32,
       backgroundColor: colors.accentDim,
       borderWidth: 1.5,
       borderColor: colors.accent + '44',
       alignItems: 'center',
       justifyContent: 'center',
-      marginBottom: 4,
+      marginBottom: 2,
     },
     photoPlaceholderTitle: {
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: '700',
       color: colors.text,
-      letterSpacing: -0.2,
     },
     photoPlaceholderSub: {
-      fontSize: 13,
+      fontSize: 12,
       color: colors.textSecondary,
       textAlign: 'center',
-      lineHeight: 18,
+      lineHeight: 17,
     },
     openCameraBtn: {
-      marginTop: 10,
+      marginTop: 8,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 7,
+      gap: 6,
       backgroundColor: colors.accent,
-      paddingHorizontal: 24,
-      paddingVertical: 11,
+      paddingHorizontal: 22,
+      paddingVertical: 10,
       borderRadius: 50,
     },
     openCameraBtnText: {
       color: colors.white,
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: '700',
     },
 
     photoPreview: {
       width: '100%',
-      height: 260,
+      height: 190,
     },
     photoOverlayRow: {
       position: 'absolute',
@@ -141,43 +158,43 @@ export const createStyles = (colors: ThemeColors) =>
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      paddingHorizontal: 14,
-      paddingVertical: 10,
-      backgroundColor: 'rgba(0,0,0,0.55)',
+      paddingHorizontal: 12,
+      paddingVertical: 8,
+      backgroundColor: 'rgba(0,0,0,0.6)',
     },
     addressRow: {
       flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 5,
+      gap: 4,
       marginRight: 8,
     },
     addressText: {
       flex: 1,
-      fontSize: 12,
+      fontSize: 11,
       color: '#FFFFFF',
       fontWeight: '500',
     },
     addressLoading: {
       flex: 1,
-      fontSize: 12,
+      fontSize: 11,
       color: 'rgba(255,255,255,0.7)',
       fontStyle: 'italic',
     },
     retakeBtn: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 5,
-      backgroundColor: 'rgba(255,255,255,0.15)',
-      paddingHorizontal: 12,
-      paddingVertical: 6,
+      gap: 4,
+      backgroundColor: 'rgba(255,255,255,0.18)',
+      paddingHorizontal: 10,
+      paddingVertical: 5,
       borderRadius: 50,
       borderWidth: 1,
-      borderColor: 'rgba(255,255,255,0.25)',
+      borderColor: 'rgba(255,255,255,0.3)',
     },
     retakeBtnText: {
       color: '#FFFFFF',
-      fontSize: 12,
+      fontSize: 11,
       fontWeight: '700',
     },
 
@@ -185,117 +202,110 @@ export const createStyles = (colors: ThemeColors) =>
       fontSize: 12,
       color: colors.danger,
       marginHorizontal: 16,
-      marginTop: -8,
-      marginBottom: 4,
+      marginTop: 5,
     },
 
-    formContainer: {
+    formSection: {
       marginHorizontal: 16,
-      marginTop: 4,
-      borderRadius: 16,
-      backgroundColor: colors.surface,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: colors.border,
-      overflow: 'hidden',
+      marginTop: 16,
+      gap: 14,
     },
-    formField: {
+
+    // Each field is a clearly visible card with a background + border
+    fieldCard: {
+      backgroundColor: colors.inputBg,
+      borderRadius: 14,
+      borderWidth: 2,
+      borderColor: colors.inputBorder,
       paddingHorizontal: 16,
-      paddingTop: 14,
+      paddingTop: 13,
       paddingBottom: 10,
     },
-    formFieldBorder: {
-      borderTopWidth: StyleSheet.hairlineWidth,
-      borderTopColor: colors.border,
+    fieldCardFocused: {
+      borderColor: colors.accent,
+      borderWidth: 2,
     },
-    fieldLabelRow: {
+    fieldCardError: {
+      borderColor: colors.danger,
+      borderWidth: 2,
+    },
+
+    fieldHeader: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginBottom: 6,
+      marginBottom: 1,
     },
-    fieldLabelLeft: {
+    fieldLabelRow: {
       flexDirection: 'row',
       alignItems: 'center',
       gap: 6,
     },
     fieldLabel: {
-      fontSize: 11,
+      fontSize: 14,
       fontWeight: '800',
-      color: colors.textSecondary,
-      textTransform: 'uppercase',
-      letterSpacing: 0.9,
+      color: colors.text,
+      letterSpacing: 0.1,
     },
-    fieldRequired: {
+    fieldBadge: {
       fontSize: 10,
-      color: colors.danger,
       fontWeight: '700',
-      backgroundColor: colors.dangerDim,
-      paddingHorizontal: 6,
+      paddingHorizontal: 7,
       paddingVertical: 2,
-      borderRadius: 4,
+      borderRadius: 5,
     },
-    fieldOptional: {
-      fontSize: 10,
+    fieldBadgeRequired: {
+      color: colors.danger,
+      backgroundColor: colors.dangerDim,
+    },
+    fieldBadgeOptional: {
       color: colors.textMuted,
-      fontWeight: '600',
+      backgroundColor: colors.surfaceElevated,
     },
     fieldHint: {
       fontSize: 12,
       color: colors.textMuted,
-      marginBottom: 8,
+      marginBottom: 10,
+      lineHeight: 16,
+      marginTop: 3,
     },
+
+    // The actual input — clearly separated from label with a visible bottom line
     input: {
       fontSize: 15,
       color: colors.text,
-      paddingVertical: 0,
-      minHeight: 24,
+      paddingVertical: 10,
+      paddingHorizontal: 12,
+      minHeight: 44,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 10,
+      borderWidth: 1,
+      borderColor: colors.border,
+    },
+    inputFocused: {
+      borderColor: colors.accent,
+      backgroundColor: colors.accentDim,
     },
     textArea: {
-      height: 90,
+      height: 100,
       textAlignVertical: 'top',
+      paddingTop: 10,
     },
+
     fieldFooter: {
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
-      marginTop: 6,
+      marginTop: 8,
     },
     fieldError: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.danger,
+      flex: 1,
     },
     charCount: {
       fontSize: 11,
       color: colors.textMuted,
     },
-    charCountWarn: {
-      color: colors.danger,
-    },
-
-    infoBox: {
-      flexDirection: 'row',
-      alignItems: 'flex-start',
-      gap: 10,
-      marginHorizontal: 16,
-      marginTop: 14,
-      padding: 14,
-      backgroundColor: colors.surfaceElevated,
-      borderRadius: 14,
-      borderWidth: StyleSheet.hairlineWidth,
-      borderColor: colors.border,
-    },
-    infoBoxTextWrap: {
-      flex: 1,
-    },
-    infoBoxTitle: {
-      fontSize: 12,
-      fontWeight: '700',
-      color: colors.text,
-      marginBottom: 2,
-    },
-    infoBoxText: {
-      fontSize: 12,
-      color: colors.textSecondary,
-      lineHeight: 18,
-    },
+    charCountWarn: { color: colors.danger },
   });

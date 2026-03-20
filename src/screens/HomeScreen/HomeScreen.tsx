@@ -9,6 +9,7 @@ import {
   RefreshControl,
   Modal,
   ScrollView,
+  TouchableWithoutFeedback,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useTheme } from '../../context/ThemeContext';
@@ -24,37 +25,38 @@ const HomeScreen = () => {
     loading,
     refreshing,
     selectedEntry,
-    modalVisible,
+    detailModalVisible,
+    optionsEntry,
+    optionsModalVisible,
     handleRefresh,
     handleOpenEntry,
-    handleCloseModal,
+    handleCloseDetailModal,
+    handleOpenOptions,
+    handleCloseOptions,
+    handleEdit,
     handleRemove,
     handleNavigateToAdd,
   } = useHomeLogic();
 
-  const formatDate = (timestamp: number): string => {
-    if (!timestamp) return '';
-    return new Date(timestamp).toLocaleDateString('en-US', {
+  const formatDate = (ts: number) =>
+    new Date(ts).toLocaleDateString('en-US', {
       weekday: 'short',
       month: 'short',
       day: 'numeric',
       year: 'numeric',
     });
-  };
 
-  const formatTime = (timestamp: number): string => {
-    if (!timestamp) return '';
-    return new Date(timestamp).toLocaleTimeString('en-US', {
+  const formatTime = (ts: number) =>
+    new Date(ts).toLocaleTimeString('en-US', {
       hour: '2-digit',
       minute: '2-digit',
     });
-  };
 
   const renderItem = ({ item }: { item: TravelEntry }) => (
     <TouchableOpacity
       style={styles.card}
       onPress={() => handleOpenEntry(item)}
-      activeOpacity={0.9}
+      activeOpacity={0.88}
     >
       <View style={styles.cardImageWrap}>
         {item.imageUri ? (
@@ -65,45 +67,37 @@ const HomeScreen = () => {
           />
         ) : (
           <View style={styles.cardImagePlaceholder}>
-            <Ionicons name="image-outline" size={32} color={colors.textMuted} />
+            <Ionicons name="image-outline" size={28} color={colors.textMuted} />
             <Text style={styles.cardImagePlaceholderText}>NO PHOTO</Text>
           </View>
         )}
       </View>
-
       <View style={styles.cardBody}>
         <View style={styles.cardTopRow}>
           <Text style={styles.cardTitle} numberOfLines={1}>
-            {item.title || 'Untitled Entry'}
+            {item.title || 'Untitled'}
           </Text>
           <TouchableOpacity
-            style={styles.removeBtn}
-            onPress={() => handleRemove(item)}
-            activeOpacity={0.75}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            style={styles.optionsBtn}
+            onPress={() => handleOpenOptions(item)}
+            activeOpacity={0.7}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Ionicons name="trash-outline" size={15} color={colors.danger} />
+            <Ionicons name="ellipsis-horizontal" size={18} color={colors.textSecondary} />
           </TouchableOpacity>
         </View>
-
-        {item.description && item.description.trim().length > 0 && (
+        {item.description?.trim().length > 0 && (
           <Text style={styles.cardDescription} numberOfLines={2}>
             {item.description}
           </Text>
         )}
-
         <View style={styles.cardFooter}>
-          <View style={styles.cardAddressWrap}>
-            <Ionicons name="location-outline" size={12} color={colors.accent} />
-            <Text style={styles.cardAddress} numberOfLines={1}>
-              {item.address || 'Location unavailable'}
-            </Text>
-          </View>
-          <View style={styles.cardDivider} />
-          <View style={styles.cardDateWrap}>
-            <Ionicons name="calendar-outline" size={11} color={colors.textMuted} />
-            <Text style={styles.cardDate}>{formatDate(item.timestamp)}</Text>
-          </View>
+          <Ionicons name="location-outline" size={12} color={colors.accent} />
+          <Text style={styles.cardAddress} numberOfLines={1}>
+            {item.address || 'Location unavailable'}
+          </Text>
+          <Ionicons name="calendar-outline" size={11} color={colors.textMuted} />
+          <Text style={styles.cardDate}>{formatDate(item.timestamp)}</Text>
         </View>
       </View>
     </TouchableOpacity>
@@ -133,7 +127,7 @@ const HomeScreen = () => {
     return (
       <View style={[styles.container, styles.loadingWrapper]}>
         <ActivityIndicator size="large" color={colors.accent} />
-        <Text style={styles.loadingText}>Loading WanderLog…</Text>
+        <Text style={styles.loadingText}>Loading Lakbay Co…</Text>
       </View>
     );
   }
@@ -143,19 +137,15 @@ const HomeScreen = () => {
       <View style={styles.header}>
         <View style={styles.headerLeft}>
           <Text style={styles.appName}>
-            Wander<Text style={styles.appNameAccent}>Log</Text>
+            Lakbay<Text style={styles.appNameAccent}> Co.</Text>
           </Text>
           <Text style={styles.appTagline}>Your personal travel journal</Text>
         </View>
         <View style={styles.headerActions}>
-          <TouchableOpacity
-            style={styles.iconBtn}
-            onPress={toggleTheme}
-            activeOpacity={0.7}
-          >
+          <TouchableOpacity style={styles.iconBtn} onPress={toggleTheme} activeOpacity={0.7}>
             <Ionicons
               name={isDark ? 'sunny-outline' : 'moon-outline'}
-              size={18}
+              size={17}
               color={colors.textSecondary}
             />
           </TouchableOpacity>
@@ -164,7 +154,7 @@ const HomeScreen = () => {
             onPress={handleNavigateToAdd}
             activeOpacity={0.85}
           >
-            <Ionicons name="add" size={18} color={colors.white} />
+            <Ionicons name="add" size={16} color={colors.white} />
             <Text style={styles.addBtnText}>New</Text>
           </TouchableOpacity>
         </View>
@@ -189,118 +179,161 @@ const HomeScreen = () => {
         showsVerticalScrollIndicator={false}
       />
 
+      {/* ── Options bottom sheet ─────────────────────────── */}
       <Modal
-        visible={modalVisible}
+        visible={optionsModalVisible}
         transparent
         animationType="slide"
-        onRequestClose={handleCloseModal}
+        onRequestClose={handleCloseOptions}
       >
-        <TouchableOpacity
-          style={styles.modalOverlay}
-          activeOpacity={1}
-          onPress={handleCloseModal}
-        >
-          <TouchableOpacity
-            style={styles.modalSheet}
-            activeOpacity={1}
-            onPress={() => {}}
-          >
-            <View style={styles.modalHandle} />
+        <TouchableWithoutFeedback onPress={handleCloseOptions}>
+          <View style={styles.optionsOverlay}>
+            <TouchableWithoutFeedback onPress={() => {}}>
+              <View style={styles.optionsSheet}>
+                <View style={styles.optionsHandle} />
+                <Text style={styles.optionsTitle} numberOfLines={1}>
+                  {optionsEntry?.title ?? 'Entry Options'}
+                </Text>
+                <TouchableOpacity
+                  style={styles.optionRow}
+                  onPress={handleEdit}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.optionIconWrap, { backgroundColor: colors.accentDim }]}>
+                    <Ionicons name="pencil-outline" size={18} color={colors.accent} />
+                  </View>
+                  <Text style={styles.optionText}>Edit Entry</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.optionRow, styles.optionRowBorder]}
+                  onPress={() => optionsEntry && handleRemove(optionsEntry)}
+                  activeOpacity={0.8}
+                >
+                  <View style={[styles.optionIconWrap, { backgroundColor: colors.dangerDim }]}>
+                    <Ionicons name="trash-outline" size={18} color={colors.danger} />
+                  </View>
+                  <Text style={[styles.optionText, styles.optionTextDanger]}>Delete Entry</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.optionCancelRow}
+                  onPress={handleCloseOptions}
+                  activeOpacity={0.8}
+                >
+                  <Text style={styles.optionCancelText}>Cancel</Text>
+                </TouchableOpacity>
+              </View>
+            </TouchableWithoutFeedback>
+          </View>
+        </TouchableWithoutFeedback>
+      </Modal>
 
-            <View style={styles.modalHeader}>
-              <Text style={styles.modalHeaderTitle}>Entry Detail</Text>
+      {/* ── Detail modal — fully scrollable ─────────────── */}
+      <Modal
+        visible={detailModalVisible}
+        transparent
+        animationType="slide"
+        onRequestClose={handleCloseDetailModal}
+      >
+        {/*
+          Key pattern: split the overlay into two layers stacked via flexbox.
+          - detailBackdrop: flex:1 transparent area above the sheet — closes on tap
+          - detailSheet: fixed height, plain View — never fires close, never blocks scroll
+        */}
+        <View style={styles.detailOverlay}>
+          <TouchableWithoutFeedback onPress={handleCloseDetailModal}>
+            <View style={styles.detailBackdrop} />
+          </TouchableWithoutFeedback>
+
+          <View style={styles.detailSheet}>
+            <View style={styles.detailHandle} />
+            <View style={styles.detailHeader}>
+              <Text style={styles.detailHeaderTitle}>Entry Detail</Text>
               <TouchableOpacity
-                style={styles.modalCloseBtn}
-                onPress={handleCloseModal}
+                style={styles.detailCloseBtn}
+                onPress={handleCloseDetailModal}
                 activeOpacity={0.7}
               >
-                <Ionicons name="close" size={18} color={colors.textSecondary} />
+                <Ionicons name="close" size={17} color={colors.textSecondary} />
               </TouchableOpacity>
             </View>
 
             {selectedEntry && (
               <ScrollView
-                contentContainerStyle={styles.modalScrollContent}
+                style={styles.detailScroll}
+                contentContainerStyle={styles.detailScrollContent}
                 showsVerticalScrollIndicator={false}
-                bounces={false}
+                bounces
               >
-                <View style={styles.modalImageWrap}>
+                <View style={styles.detailImageWrap}>
                   {selectedEntry.imageUri ? (
                     <Image
                       source={{ uri: selectedEntry.imageUri }}
-                      style={styles.modalImage}
+                      style={styles.detailImage}
                       resizeMode="cover"
                     />
                   ) : (
-                    <View style={styles.modalImagePlaceholder}>
+                    <View style={styles.detailImagePlaceholder}>
                       <Ionicons name="image-outline" size={40} color={colors.textMuted} />
-                      <Text style={styles.modalImagePlaceholderText}>NO PHOTO</Text>
+                      <Text style={styles.detailImagePlaceholderText}>NO PHOTO</Text>
                     </View>
                   )}
                 </View>
-
-                <View style={styles.modalBody}>
-                  <Text style={styles.modalTitle}>{selectedEntry.title}</Text>
-
-                  {selectedEntry.description && selectedEntry.description.trim().length > 0 && (
-                    <Text style={styles.modalDescription}>
+                <View style={styles.detailBody}>
+                  <Text style={styles.detailTitle}>{selectedEntry.title}</Text>
+                  {selectedEntry.description?.trim().length > 0 && (
+                    <Text style={styles.detailDescription}>
                       {selectedEntry.description}
                     </Text>
                   )}
-
-                  <View style={styles.modalDivider} />
-
-                  <View style={styles.modalMetaCard}>
-                    <View style={styles.modalMetaRow}>
-                      <View style={styles.modalMetaIconWrap}>
+                  <View style={styles.detailDivider} />
+                  <View style={styles.detailMetaCard}>
+                    <View style={styles.detailMetaRow}>
+                      <View style={styles.detailMetaIconWrap}>
                         <Ionicons name="location" size={16} color={colors.accent} />
                       </View>
-                      <View style={styles.modalMetaContent}>
-                        <Text style={styles.modalMetaLabel}>Location</Text>
-                        <Text style={[styles.modalMetaValue, styles.modalMetaAccent]}>
-                          {selectedEntry.address || 'Location unavailable'}
+                      <View style={styles.detailMetaContent}>
+                        <Text style={styles.detailMetaLabel}>Location</Text>
+                        <Text style={[styles.detailMetaValue, styles.detailMetaAccent]}>
+                          {selectedEntry.address || 'Unavailable'}
                         </Text>
                       </View>
                     </View>
-
-                    <View style={[styles.modalMetaRow, styles.modalMetaRowBorder]}>
-                      <View style={styles.modalMetaIconWrap}>
+                    <View style={[styles.detailMetaRow, styles.detailMetaRowBorder]}>
+                      <View style={styles.detailMetaIconWrap}>
                         <Ionicons name="calendar" size={16} color={colors.accent} />
                       </View>
-                      <View style={styles.modalMetaContent}>
-                        <Text style={styles.modalMetaLabel}>Date</Text>
-                        <Text style={styles.modalMetaValue}>
+                      <View style={styles.detailMetaContent}>
+                        <Text style={styles.detailMetaLabel}>Date</Text>
+                        <Text style={styles.detailMetaValue}>
                           {formatDate(selectedEntry.timestamp)}
                         </Text>
                       </View>
                     </View>
-
-                    <View style={[styles.modalMetaRow, styles.modalMetaRowBorder]}>
-                      <View style={styles.modalMetaIconWrap}>
+                    <View style={[styles.detailMetaRow, styles.detailMetaRowBorder]}>
+                      <View style={styles.detailMetaIconWrap}>
                         <Ionicons name="time" size={16} color={colors.accent} />
                       </View>
-                      <View style={styles.modalMetaContent}>
-                        <Text style={styles.modalMetaLabel}>Time</Text>
-                        <Text style={styles.modalMetaValue}>
+                      <View style={styles.detailMetaContent}>
+                        <Text style={styles.detailMetaLabel}>Time</Text>
+                        <Text style={styles.detailMetaValue}>
                           {formatTime(selectedEntry.timestamp)}
                         </Text>
                       </View>
                     </View>
                   </View>
+                  <TouchableOpacity
+                    style={styles.detailRemoveBtn}
+                    onPress={() => selectedEntry && handleRemove(selectedEntry)}
+                    activeOpacity={0.75}
+                  >
+                    <Ionicons name="trash-outline" size={15} color={colors.danger} />
+                    <Text style={styles.detailRemoveBtnText}>Remove This Entry</Text>
+                  </TouchableOpacity>
                 </View>
-
-                <TouchableOpacity
-                  style={styles.modalRemoveBtn}
-                  onPress={() => selectedEntry && handleRemove(selectedEntry)}
-                  activeOpacity={0.75}
-                >
-                  <Ionicons name="trash-outline" size={16} color={colors.danger} />
-                  <Text style={styles.modalRemoveBtnText}>Remove This Entry</Text>
-                </TouchableOpacity>
               </ScrollView>
             )}
-          </TouchableOpacity>
-        </TouchableOpacity>
+          </View>
+        </View>
       </Modal>
     </View>
   );

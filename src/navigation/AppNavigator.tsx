@@ -3,6 +3,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { RootStackParamList } from '../types';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import AddEntryScreen from '../screens/AddEntryScreen/AddEntryScreen';
+import EditEntryScreen from '../screens/EditEntryScreen/EditEntryScreen';
 
 const Stack = createStackNavigator<RootStackParamList>();
 
@@ -11,6 +12,7 @@ const AppNavigator = () => {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="Home" component={HomeScreen} />
       <Stack.Screen name="AddEntry" component={AddEntryScreen} />
+      <Stack.Screen name="EditEntry" component={EditEntryScreen} />
     </Stack.Navigator>
   );
 };

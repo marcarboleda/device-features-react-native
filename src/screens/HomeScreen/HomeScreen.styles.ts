@@ -1,18 +1,15 @@
 import { StyleSheet, Platform, Dimensions } from 'react-native';
 import { ThemeColors } from '../../context/ThemeContext';
-
-const { width, height } = Dimensions.get('window');
-
+const { height } = Dimensions.get('window');
 export const createStyles = (colors: ThemeColors) =>
   StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: colors.background,
     },
-
     header: {
       paddingTop: Platform.OS === 'ios' ? 58 : 42,
-      paddingBottom: 16,
+      paddingBottom: 14,
       paddingHorizontal: 20,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
@@ -21,23 +18,19 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'space-between',
     },
-    headerLeft: {
-      flex: 1,
-    },
+    headerLeft: { flex: 1 },
     appName: {
-      fontSize: 28,
+      fontSize: 26,
       fontWeight: '900',
       color: colors.text,
-      letterSpacing: -1.2,
+      letterSpacing: -1,
     },
-    appNameAccent: {
-      color: colors.accent,
-    },
+    appNameAccent: { color: colors.accent },
     appTagline: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.textMuted,
       marginTop: 1,
-      letterSpacing: 0.2,
+      letterSpacing: 0.3,
     },
     headerActions: {
       flexDirection: 'row',
@@ -45,9 +38,9 @@ export const createStyles = (colors: ThemeColors) =>
       gap: 8,
     },
     iconBtn: {
-      width: 40,
-      height: 40,
-      borderRadius: 20,
+      width: 38,
+      height: 38,
+      borderRadius: 19,
       backgroundColor: colors.surfaceElevated,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: colors.border,
@@ -57,26 +50,24 @@ export const createStyles = (colors: ThemeColors) =>
     addBtn: {
       flexDirection: 'row',
       alignItems: 'center',
-      gap: 6,
+      gap: 5,
       backgroundColor: colors.accent,
-      paddingHorizontal: 16,
+      paddingHorizontal: 14,
       paddingVertical: 9,
       borderRadius: 50,
     },
     addBtnText: {
       color: colors.white,
-      fontSize: 14,
+      fontSize: 13,
       fontWeight: '700',
-      letterSpacing: 0.1,
     },
-
     listContent: {
       paddingTop: 12,
       paddingHorizontal: 14,
       paddingBottom: 100,
       gap: 12,
     },
-
+    // ── Card ──────────────────────────────────────────────────
     card: {
       backgroundColor: colors.surface,
       borderRadius: 16,
@@ -86,12 +77,12 @@ export const createStyles = (colors: ThemeColors) =>
       shadowColor: colors.cardShadow,
       shadowOffset: { width: 0, height: 2 },
       shadowOpacity: 0.08,
-      shadowRadius: 12,
+      shadowRadius: 10,
       elevation: 3,
     },
     cardImageWrap: {
       width: '100%',
-      height: 200,
+      height: 170,
       backgroundColor: colors.surfaceElevated,
     },
     cardImage: {
@@ -103,55 +94,49 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
       gap: 6,
+      backgroundColor: colors.surfaceElevated,
     },
     cardImagePlaceholderText: {
-      fontSize: 12,
+      fontSize: 11,
       color: colors.textMuted,
       letterSpacing: 1,
       fontWeight: '600',
     },
-
     cardBody: {
-      padding: 14,
+      paddingHorizontal: 14,
+      paddingTop: 12,
+      paddingBottom: 12,
     },
     cardTopRow: {
       flexDirection: 'row',
-      justifyContent: 'space-between',
       alignItems: 'flex-start',
-      marginBottom: 6,
+      justifyContent: 'space-between',
+      marginBottom: 5,
     },
     cardTitle: {
-      fontSize: 16,
+      fontSize: 15,
       fontWeight: '700',
       color: colors.text,
       flex: 1,
-      marginRight: 10,
       letterSpacing: -0.3,
-      lineHeight: 22,
+      lineHeight: 20,
+      marginRight: 8,
     },
-    removeBtn: {
-      width: 32,
-      height: 32,
-      borderRadius: 16,
-      backgroundColor: colors.dangerDim,
-      borderWidth: 1,
-      borderColor: colors.danger + '44',
+    optionsBtn: {
+      width: 30,
+      height: 30,
+      borderRadius: 15,
       alignItems: 'center',
       justifyContent: 'center',
+      marginTop: -2,
     },
     cardDescription: {
       fontSize: 13,
       color: colors.textSecondary,
-      lineHeight: 19,
+      lineHeight: 18,
       marginBottom: 10,
     },
     cardFooter: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 5,
-    },
-    cardAddressWrap: {
-      flex: 1,
       flexDirection: 'row',
       alignItems: 'center',
       gap: 4,
@@ -162,23 +147,11 @@ export const createStyles = (colors: ThemeColors) =>
       fontWeight: '500',
       flex: 1,
     },
-    cardDateWrap: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      gap: 3,
-    },
     cardDate: {
       fontSize: 11,
       color: colors.textMuted,
     },
-    cardDivider: {
-      width: 3,
-      height: 3,
-      borderRadius: 2,
-      backgroundColor: colors.textMuted,
-      marginHorizontal: 2,
-    },
-
+    // ── Empty state ────────────────────────────────────────────
     emptyWrapper: {
       flex: 1,
       alignItems: 'center',
@@ -226,7 +199,6 @@ export const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       fontWeight: '700',
     },
-
     loadingWrapper: {
       flex: 1,
       alignItems: 'center',
@@ -237,21 +209,97 @@ export const createStyles = (colors: ThemeColors) =>
       fontSize: 14,
       color: colors.textSecondary,
     },
-
-    modalOverlay: {
+    // ── Options bottom sheet ───────────────────────────────────
+    optionsOverlay: {
       flex: 1,
       backgroundColor: colors.overlay,
       justifyContent: 'flex-end',
     },
-    modalSheet: {
+    optionsSheet: {
+      backgroundColor: colors.modalBg,
+      borderTopLeftRadius: 20,
+      borderTopRightRadius: 20,
+      paddingBottom: Platform.OS === 'ios' ? 36 : 24,
+    },
+    optionsHandle: {
+      width: 36,
+      height: 4,
+      borderRadius: 2,
+      backgroundColor: colors.border,
+      alignSelf: 'center',
+      marginTop: 12,
+      marginBottom: 8,
+    },
+    optionsTitle: {
+      fontSize: 13,
+      fontWeight: '700',
+      color: colors.textMuted,
+      paddingHorizontal: 20,
+      paddingBottom: 10,
+      borderBottomWidth: StyleSheet.hairlineWidth,
+      borderBottomColor: colors.border,
+    },
+    optionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: 14,
+      paddingHorizontal: 20,
+      paddingVertical: 15,
+    },
+    optionRowBorder: {
+      borderTopWidth: StyleSheet.hairlineWidth,
+      borderTopColor: colors.border,
+    },
+    optionIconWrap: {
+      width: 38,
+      height: 38,
+      borderRadius: 12,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    optionText: {
+      fontSize: 15,
+      fontWeight: '600',
+      color: colors.text,
+    },
+    optionTextDanger: { color: colors.danger },
+    optionCancelRow: {
+      marginHorizontal: 14,
+      marginTop: 8,
+      backgroundColor: colors.surfaceElevated,
+      borderRadius: 14,
+      alignItems: 'center',
+      paddingVertical: 15,
+    },
+    optionCancelText: {
+      fontSize: 15,
+      fontWeight: '700',
+      color: colors.textSecondary,
+    },
+    // ── Detail modal ───────────────────────────────────────────
+    //
+    // Pattern: detailOverlay is a flex column.
+    //   - detailBackdrop: flex:1 — fills all space ABOVE the sheet, closes on tap
+    //   - detailSheet: fixed height — sits at the bottom, never closes on tap/scroll
+    //
+    detailOverlay: {
+      flex: 1,
+      backgroundColor: colors.overlay,
+      flexDirection: 'column',
+      justifyContent: 'flex-end',
+    },
+    detailBackdrop: {
+      flex: 1,                // takes up all space above the sheet
+    },
+    detailSheet: {
+      height: height * 0.92,
       backgroundColor: colors.modalBg,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
-      maxHeight: height * 0.9,
       overflow: 'hidden',
     },
-    modalHandle: {
-      width: 40,
+    detailHandle: {
+      width: 36,
       height: 4,
       borderRadius: 2,
       backgroundColor: colors.border,
@@ -259,96 +307,99 @@ export const createStyles = (colors: ThemeColors) =>
       marginTop: 12,
       marginBottom: 2,
     },
-    modalHeader: {
+    detailHeader: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      paddingHorizontal: 20,
-      paddingVertical: 14,
+      paddingHorizontal: 18,
+      paddingVertical: 12,
       borderBottomWidth: StyleSheet.hairlineWidth,
       borderBottomColor: colors.border,
     },
-    modalHeaderTitle: {
-      fontSize: 16,
+    detailHeaderTitle: {
+      fontSize: 15,
       fontWeight: '800',
       color: colors.text,
       letterSpacing: -0.3,
     },
-    modalCloseBtn: {
-      width: 34,
-      height: 34,
-      borderRadius: 17,
+    detailCloseBtn: {
+      width: 32,
+      height: 32,
+      borderRadius: 16,
       backgroundColor: colors.surfaceElevated,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: colors.border,
       alignItems: 'center',
       justifyContent: 'center',
     },
-    modalScrollContent: {
-      paddingBottom: 48,
+    detailScroll: {
+      flex: 1,
     },
-    modalImageWrap: {
+    detailScrollContent: {
+      paddingBottom: Platform.OS === 'ios' ? 80 : 60,
+    },
+    detailImageWrap: {
       width: '100%',
       height: 280,
       backgroundColor: colors.surfaceElevated,
     },
-    modalImage: {
+    detailImage: {
       width: '100%',
       height: '100%',
     },
-    modalImagePlaceholder: {
+    detailImagePlaceholder: {
       flex: 1,
       alignItems: 'center',
       justifyContent: 'center',
       gap: 8,
     },
-    modalImagePlaceholderText: {
-      fontSize: 13,
+    detailImagePlaceholderText: {
+      fontSize: 12,
       color: colors.textMuted,
       letterSpacing: 1,
     },
-    modalBody: {
+    detailBody: {
       padding: 20,
     },
-    modalTitle: {
-      fontSize: 24,
+    detailTitle: {
+      fontSize: 22,
       fontWeight: '800',
       color: colors.text,
-      letterSpacing: -0.6,
-      marginBottom: 8,
-      lineHeight: 30,
+      letterSpacing: -0.5,
+      marginBottom: 10,
+      lineHeight: 28,
     },
-    modalDescription: {
+    detailDescription: {
       fontSize: 15,
       color: colors.textSecondary,
       lineHeight: 23,
       marginBottom: 20,
     },
-    modalDivider: {
+    detailDivider: {
       height: StyleSheet.hairlineWidth,
       backgroundColor: colors.border,
-      marginBottom: 18,
+      marginBottom: 16,
     },
-    modalMetaCard: {
+    detailMetaCard: {
       backgroundColor: colors.surfaceElevated,
       borderRadius: 14,
       borderWidth: StyleSheet.hairlineWidth,
       borderColor: colors.border,
       overflow: 'hidden',
-      marginBottom: 16,
+      marginBottom: 20,
     },
-    modalMetaRow: {
+    detailMetaRow: {
       flexDirection: 'row',
       alignItems: 'center',
-      paddingHorizontal: 16,
+      paddingHorizontal: 14,
       paddingVertical: 13,
       gap: 12,
     },
-    modalMetaRowBorder: {
+    detailMetaRowBorder: {
       borderTopWidth: StyleSheet.hairlineWidth,
       borderTopColor: colors.border,
     },
-    modalMetaIconWrap: {
+    detailMetaIconWrap: {
       width: 34,
       height: 34,
       borderRadius: 10,
@@ -356,10 +407,8 @@ export const createStyles = (colors: ThemeColors) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    modalMetaContent: {
-      flex: 1,
-    },
-    modalMetaLabel: {
+    detailMetaContent: { flex: 1 },
+    detailMetaLabel: {
       fontSize: 10,
       fontWeight: '700',
       color: colors.textMuted,
@@ -367,28 +416,24 @@ export const createStyles = (colors: ThemeColors) =>
       letterSpacing: 0.8,
       marginBottom: 2,
     },
-    modalMetaValue: {
+    detailMetaValue: {
       fontSize: 14,
       color: colors.text,
       lineHeight: 19,
     },
-    modalMetaAccent: {
-      color: colors.accent,
-    },
-    modalRemoveBtn: {
+    detailMetaAccent: { color: colors.accent },
+    detailRemoveBtn: {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'center',
       gap: 8,
-      marginHorizontal: 20,
-      marginTop: 4,
       paddingVertical: 14,
       borderRadius: 12,
       borderWidth: 1,
       borderColor: colors.danger + '55',
       backgroundColor: colors.dangerDim,
     },
-    modalRemoveBtnText: {
+    detailRemoveBtnText: {
       color: colors.danger,
       fontSize: 14,
       fontWeight: '700',

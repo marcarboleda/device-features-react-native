@@ -13,7 +13,9 @@ export const useHomeLogic = () => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [selectedEntry, setSelectedEntry] = useState<TravelEntry | null>(null);
-  const [modalVisible, setModalVisible] = useState(false);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [optionsEntry, setOptionsEntry] = useState<TravelEntry | null>(null);
+  const [optionsModalVisible, setOptionsModalVisible] = useState(false);
 
   const fetchEntries = async () => {
     try {
@@ -42,12 +44,29 @@ export const useHomeLogic = () => {
   const handleOpenEntry = (entry: TravelEntry) => {
     if (!entry || !entry.id) return;
     setSelectedEntry(entry);
-    setModalVisible(true);
+    setDetailModalVisible(true);
   };
 
-  const handleCloseModal = () => {
-    setModalVisible(false);
+  const handleCloseDetailModal = () => {
+    setDetailModalVisible(false);
     setSelectedEntry(null);
+  };
+
+  const handleOpenOptions = (entry: TravelEntry) => {
+    if (!entry || !entry.id) return;
+    setOptionsEntry(entry);
+    setOptionsModalVisible(true);
+  };
+
+  const handleCloseOptions = () => {
+    setOptionsModalVisible(false);
+    setOptionsEntry(null);
+  };
+
+  const handleEdit = () => {
+    if (!optionsEntry) return;
+    handleCloseOptions();
+    navigation.navigate('EditEntry', { entry: optionsEntry });
   };
 
   const handleRemove = (entry: TravelEntry) => {
@@ -55,6 +74,7 @@ export const useHomeLogic = () => {
       Alert.alert('Error', 'Invalid entry.');
       return;
     }
+    handleCloseOptions();
 
     Alert.alert(
       'Remove Entry',
@@ -69,7 +89,7 @@ export const useHomeLogic = () => {
               const success = await removeEntry(entry.id);
               if (success) {
                 setEntries((prev) => prev.filter((e) => e.id !== entry.id));
-                if (selectedEntry?.id === entry.id) handleCloseModal();
+                if (selectedEntry?.id === entry.id) handleCloseDetailModal();
               } else {
                 Alert.alert('Error', 'Failed to remove entry. Please try again.');
               }
@@ -91,10 +111,15 @@ export const useHomeLogic = () => {
     loading,
     refreshing,
     selectedEntry,
-    modalVisible,
+    detailModalVisible,
+    optionsEntry,
+    optionsModalVisible,
     handleRefresh,
     handleOpenEntry,
-    handleCloseModal,
+    handleCloseDetailModal,
+    handleOpenOptions,
+    handleCloseOptions,
+    handleEdit,
     handleRemove,
     handleNavigateToAdd,
   };

@@ -10,4 +10,5 @@ export interface TravelEntry {
 export type RootStackParamList = {
   Home: undefined;
   AddEntry: undefined;
+  EditEntry: { entry: TravelEntry };
 };
