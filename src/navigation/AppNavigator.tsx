@@ -16,8 +16,13 @@ const AppNavigator = () => {
   const { colors } = useTheme();
   const [onboardingDone, setOnboardingDone] = useState<boolean | null>(null);
 
+//   useEffect(() => {
+//   AsyncStorage.getItem(ONBOARDING_KEY)
+//     .then((value) => setOnboardingDone(value === 'true'))
+//     .catch(() => setOnboardingDone(true));
+// }, []);
+
   useEffect(() => {
-  // DEV ONLY — remove this line before release
   AsyncStorage.removeItem(ONBOARDING_KEY).then(() =>
     setOnboardingDone(false)
   );
